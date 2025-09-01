@@ -1,0 +1,347 @@
+"use client";
+
+import AppHeader from "@/modules/components/AppHeader/AppHeader";
+import LoadingCard from "@/modules/components/LoadingCard";
+import ExperienceModal from "@/modules/components/modal/ExperiencesModal";
+import {
+  useAddExperience,
+  useDeleteExperience,
+  useExperiences,
+  useUpdateExperience,
+} from "@/modules/experience/experience.query";
+import {
+  BulbOutlined,
+  CalendarOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EnvironmentOutlined,
+  FileTextOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Flex,
+  message,
+  Progress,
+  Row,
+  Tag,
+  Typography,
+} from "antd";
+
+import Layout from "antd/es/layout/layout";
+import Image from "next/image";
+import { useState } from "react";
+import { Analytics } from "./Experience.stc";
+
+const { Title, Text, Paragraph } = Typography;
+
+export default function Experience() {
+  const { data, isLoading, error } = useExperiences();
+  const { mutate: addExperience, isLoading: creating } = useAddExperience();
+  const { mutate: updateExperience, isLoading: updating } =
+    useUpdateExperience();
+  const { mutate: deleteExperience } = useDeleteExperience();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedExp, setSelectedExp] = useState(null);
+
+  const handleAdd = () => {
+    setSelectedExp(null);
+    setModalOpen(true);
+  };
+
+  const handleEdit = (exp) => {
+    setSelectedExp(exp);
+    setModalOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    if (confirm("Are you sure you want to delete this experience?")) {
+      deleteExperience(id, {
+        onSuccess: () => message.success("Experience deleted successfully"),
+        onError: () => message.error("Failed to delete"),
+      });
+    }
+  };
+
+  const handleSubmit = (formValues) => {
+    const payload = {
+      ...formValues,
+      achievements: formValues.achievements
+        ? formValues.achievements.split(",").map((item) => item.trim())
+        : [],
+      technologies: formValues.technologies
+        ? formValues.technologies.split(",").map((item) => item.trim())
+        : [],
+    };
+
+    if (selectedExp) {
+      updateExperience(
+        { id: selectedExp.id, ...payload },
+        {
+          onSuccess: () => {
+            message.success("Experience updated");
+            setModalOpen(false);
+            setSelectedExp(null);
+          },
+          onError: () => message.error("Update failed"),
+        }
+      );
+    } else {
+      addExperience(payload, {
+        onSuccess: () => {
+          message.success("Experience added");
+          setModalOpen(false);
+        },
+        onError: () => message.error("Creation failed"),
+      });
+    }
+  };
+
+  return (
+    <Layout>
+      <AppHeader />
+
+      <div style={{ padding: "0 48px" }}>
+        <div style={{ position: "relative", marginBottom: "5px" }}>
+          <Breadcrumb
+            style={{ margin: "16px 0", fontSize: "20px" }}
+            items={[{ title: "Work Experience" }]}
+          />
+          <p style={{ fontSize: "13px", marginBottom: "5px" }}>
+            Manage your professional experience
+          </p>
+          <Flex gap="small" wrap className="flex-buttons">
+            <Button>Import LinkedIn</Button>
+            <Button type="primary" onClick={handleAdd}>
+              Add Experience
+            </Button>
+          </Flex>
+        </div>
+
+        <Layout style={{ padding: "24px 0" }}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={16} md={16} lg={16}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  flexDirection: "column",
+                }}
+              >
+                {isLoading ? (
+                  <LoadingCard />
+                ) : (
+                  data?.experiences?.map((exp) => (
+                    <Card
+                      key={exp.id}
+                      style={{ width: "100%", boxShadow: " var(--shadow-md)" }}
+                      className="shadow-md w-full"
+                    >
+                      <div className="flex justify-between items-start gap-2 mb-4">
+                        <Title level={3}>{exp.jobTitle}</Title>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "8px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <Button
+                            icon={<EditOutlined />}
+                            type="primary"
+                            size="small"
+                            onClick={() => handleEdit(exp)}
+                          ></Button>
+                          <Button
+                            icon={<DeleteOutlined />}
+                            danger
+                            type="primary"
+                            size="small"
+                            onClick={() => handleDelete(exp.id)}
+                          ></Button>
+                        </div>
+                      </div>
+
+                      <Title level={4} style={{ color: "blue" }}>
+                        {exp.company}
+                      </Title>
+
+                      <div className="flex flex-wrap gap-2 text-gray-400 text-sm items-center">
+                        <EnvironmentOutlined style={{ color: "#f5550c" }} />
+                        <Text style={{ color: "gray" }}>{exp.location}</Text>
+                        <span>|</span>
+                        <CalendarOutlined style={{ color: "#f08e0e" }} />
+                        <Text style={{ color: "gray" }}>
+                          {exp.startDate}
+                        </Text> -{" "}
+                        <Text style={{ color: "gray" }}>{exp.endDate}</Text>
+                      </div>
+
+                      <Paragraph style={{ color: "grey", fontSize: "14px" }}>
+                        {exp.description}
+                      </Paragraph>
+
+                      <Text>Key Achievements:</Text>
+                      <ul className="list-disc pl-5 text-gray-400">
+                        {exp.achievements?.map((a, i) => (
+                          <li key={i}>{a}</li>
+                        ))}
+                      </ul>
+
+                      <Text>Technologies:</Text>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {exp.technologies?.map((t, i) => (
+                          <Tag color="blue" key={i}>
+                            {t}
+                          </Tag>
+                        ))}
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </Col>
+
+            <Col xs={24} sm={6} md={8} lg={8}>
+              <Card
+                title="Experience Analytics"
+                variant="borderless"
+                style={{ width: "100%" }}
+              >
+                <Analytics gap="small" vertical>
+                  <Text className="analytics-title">5.6</Text>
+                  <Text className="analytics-text">Year Total Experince</Text>
+                  <div>
+                    <div className="analytics-div">
+                      <Paragraph>Frontend Development</Paragraph>
+                      <Paragraph> 4.5 years</Paragraph>
+                    </div>
+                    <Progress percent={80} status="active" showInfo={false} />
+                  </div>
+                  <div>
+                    <div className="analytics-div">
+                      <Paragraph>Team Leadership</Paragraph>
+                      <Paragraph> 2 years</Paragraph>
+                    </div>
+                    <Progress
+                      percent={70}
+                      status="exception"
+                      showInfo={false}
+                    />
+                  </div>
+                </Analytics>
+              </Card>
+              <Card
+                title="AI Suggestions"
+                variant="borderless"
+                style={{
+                  width: "100%",
+                  marginTop: "20px",
+                  textEmphasisColor: "blue-400",
+                }}
+              >
+                <Card
+                  style={{
+                    marginBottom: "20px",
+                    backgroundColor: "#f7f8fcff",
+                    border: "1px solid #c3dafe",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#839df3ff",
+                      fontWeight: "bold",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {" "}
+                    <BulbOutlined
+                      style={{ color: "#faea06ff", marginRight: "6px" }}
+                    />
+                    Improvement Tip
+                  </Text>
+                  <Paragraph
+                    style={{
+                      color: "#5178f7ff",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Add quantifiable metrics to your achievements. For example:
+                    Improved performance by X% or Managed team of X people.
+                  </Paragraph>
+                </Card>
+                <Card
+                  style={{
+                    marginBottom: "20px",
+                    backgroundColor: "#fcf7f8ff",
+                    border: "1px solid #fcaeaeff",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#ff9b19ff",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {" "}
+                    <WarningOutlined
+                      style={{ color: "#faea06ff", marginRight: "6px" }}
+                    />
+                    Missing Skills
+                  </Text>
+                  <Paragraph
+                    style={{
+                      color: "#ff9b19ff",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Consider adding cloud platforms (AWS, Azure) to match
+                    current job market demands.
+                  </Paragraph>
+                </Card>
+              </Card>
+              <Card
+                title="Quick Actions"
+                variant="borderless"
+                style={{ marginTop: "20px", width: "100%" }}
+              >
+                <Flex vertical gap="small" style={{ width: "100%" }}>
+                  <Button type="primary" block>
+                    <Image
+                      src="/assect/AiIcon.png"
+                      alt="AI Icon"
+                      width={20}
+                      height={20}
+                    />
+                    Ai Optimize Description
+                  </Button>
+                  <Button block>
+                    <FileTextOutlined style={{ fontSize: "16px" }} /> Generate
+                    CV Section
+                  </Button>
+                  <Button block>View Career Timeline</Button>
+                </Flex>
+              </Card>
+            </Col>
+          </Row>
+        </Layout>
+      </div>
+
+      <ExperienceModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setSelectedExp(null);
+        }}
+        onSubmit={handleSubmit}
+        initialData={selectedExp}
+        loading={creating || updating}
+      />
+    </Layout>
+  );
+}
