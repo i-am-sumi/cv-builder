@@ -9,14 +9,19 @@ import {
   useUpdateSkill,
 } from "@/modules/skill/skill.query";
 import {
-  CloudOutlined,
-  DeleteOutlined,
   DockerOutlined,
-  EditOutlined,
   GithubOutlined,
   LaptopOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import {
+  faChalkboard,
+  faCloud,
+  faDatabase,
+  faPen,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Breadcrumb,
   Button,
@@ -129,7 +134,10 @@ export default function Skill() {
                       gap: "10px",
                     }}
                   >
-                    <LaptopOutlined />
+                    <FontAwesomeIcon
+                      icon={faChalkboard}
+                      style={{ fontSize: "15px", paddingTop: "10px" }}
+                    />
 
                     <Title level={4} style={{ marginTop: "5px" }}>
                       {" "}
@@ -208,7 +216,14 @@ export default function Skill() {
                                 size="small"
                                 onClick={() => handleEdit(skill)}
                               >
-                                <EditOutlined />
+                                <FontAwesomeIcon
+                                  icon={faPen}
+                                  style={{
+                                    alignItems: "center",
+                                    fontSize: "10px",
+                                    color: "white",
+                                  }}
+                                />
                               </Button>
                               <Button
                                 type="primary"
@@ -218,7 +233,14 @@ export default function Skill() {
                                   handleDelete(skill.id);
                                 }}
                               >
-                                <DeleteOutlined />
+                                <FontAwesomeIcon
+                                  icon={faTrash}
+                                  style={{
+                                    alignItems: "center",
+                                    fontSize: "10px",
+                                    color: "white",
+                                  }}
+                                />
                               </Button>
                             </div>
                           </div>
@@ -249,17 +271,36 @@ export default function Skill() {
                   </Button>
                 </Text>
                 <Row gutter={16}>
-                  <Col span={6} xs={32} sm={16} md={12} lg={6}>
+                  <Col
+                    xs={24}
+                    sm={16}
+                    md={12}
+                    lg={6}
+                    style={{ marginBottom: "5px" }}
+                  >
                     <ToolsCard variant="borderless">
                       <Paragraph style={{ textAlign: "center" }}>
                         {" "}
-                        <CloudOutlined style={{ fontSize: "30px" }} />
+                        <FontAwesomeIcon
+                          icon={faCloud}
+                          style={{
+                            alignItems: "center",
+                            fontSize: "27px",
+                            color: "cyan",
+                          }}
+                        />
                       </Paragraph>
                       <Paragraph className="paragraph">AWS</Paragraph>
                       <Tag color="blue">Advanced</Tag>
                     </ToolsCard>
                   </Col>
-                  <Col span={6} xs={32} sm={16} md={12} lg={6}>
+                  <Col
+                    xs={24}
+                    sm={18}
+                    md={12}
+                    lg={6}
+                    style={{ marginBottom: "5px" }}
+                  >
                     <Card
                       variant="borderless"
                       style={{ display: "flex", justifyContent: "center" }}
@@ -275,13 +316,18 @@ export default function Skill() {
                       <Tag color="orange">Intermediate</Tag>
                     </Card>
                   </Col>
-                  <Col span={6} xs={32} sm={16} md={12} lg={6}>
+                  <Col
+                    xs={24}
+                    sm={16}
+                    md={12}
+                    lg={6}
+                    style={{ marginBottom: "5px" }}
+                  >
                     <Card
                       variant="borderless"
                       style={{
                         display: "flex",
                         justifyContent: "center",
-                        marginTop: "10px",
                       }}
                     >
                       {" "}
@@ -295,13 +341,18 @@ export default function Skill() {
                       <Tag color="green">Expert</Tag>
                     </Card>
                   </Col>
-                  <Col span={6} xs={32} sm={16} md={12} lg={6}>
+                  <Col
+                    xs={24}
+                    sm={16}
+                    md={12}
+                    lg={6}
+                    style={{ marginBottom: "5px" }}
+                  >
                     <Card
                       variant="borderless"
                       style={{
                         display: "flex",
                         justifyContent: "center",
-                        marginTop: "10px",
                       }}
                     >
                       {" "}
@@ -309,11 +360,13 @@ export default function Skill() {
                         style={{ display: "flex", justifyContent: "center" }}
                       >
                         {" "}
-                        <Image
-                          src="/assect/mongoDB.png"
-                          width={30}
-                          height={30}
-                          alt=""
+                        <FontAwesomeIcon
+                          icon={faDatabase}
+                          style={{
+                            alignItems: "center",
+                            fontSize: "27px",
+                            color: "blue",
+                          }}
                         />
                       </Paragraph>
                       <Paragraph className="paragraph">MongoDB</Paragraph>
@@ -342,7 +395,7 @@ export default function Skill() {
                     Add Tool
                   </Button>
                 </Text>
-                <div className="">
+                <div>
                   <Tag style={{ padding: "10px", fontSize: "13px" }}>
                     Team Leadership
                   </Tag>
@@ -378,7 +431,7 @@ export default function Skill() {
             </Col>
             <Col xs={24} sm={4} md={8} lg={8}>
               <Card
-                title="Skills Overview"
+                title={<Title level={4}>Skills Overview</Title>}
                 variant="borderless"
                 style={{ width: "100%" }}
               >
@@ -424,7 +477,7 @@ export default function Skill() {
                 </Flex>
               </Card>
               <Card
-                title="Trending Skills"
+                title={<Title level={4}>Trending Skills</Title>}
                 variant="borderless"
                 style={{
                   marginTop: "20px",
@@ -480,7 +533,7 @@ export default function Skill() {
                 </Card>
               </Card>
               <Card
-                title="Skill Actions"
+                title={<Title level={4}>Skill Actions</Title>}
                 variant="borderless"
                 style={{ width: "100%", marginTop: "20px" }}
               >

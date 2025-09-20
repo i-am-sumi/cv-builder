@@ -41,8 +41,8 @@ export const useUpdateExperience = () => {
     onSuccess: (updatedExperience) => {
       const id = updatedExperience?.id;
       if (id) {
-        queryClient.setQueryData(["experience", id], updatedExperience);
-        queryClient.invalidateQueries(["experience"]);
+        queryClient.setQueryData(["experiences", id], updatedExperience);
+        queryClient.invalidateQueries(["experiences"]);
       }
     },
   });
@@ -53,7 +53,7 @@ export const useDeleteExperience = () => {
   return useMutation({
     mutationFn: deleteExperience,
     onSuccess: () => {
-      queryClient.invalidateQueries(["experience"]);
+      queryClient.invalidateQueries(["experiences"]);
     },
   });
 };

@@ -29,16 +29,3 @@ export const useAddCV = () => {
     },
   });
 };
-
-/*export const useUpdateCV = () => {
-  return useMutation({
-    mutationFn: updateCV,
-    onSuccess: () => alert("update cv"),
-  });
-};
-
-export const useDeleteCV = () => {
-  return useMutation({
-    mutationFn: deleteCV,
-  });
-};*/

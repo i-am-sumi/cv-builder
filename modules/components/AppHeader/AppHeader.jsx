@@ -1,12 +1,12 @@
 "use client";
-import theme from "@/theme/themeConfig";
-import { Avatar, Button, Dropdown, Layout, Menu } from "antd";
+import { Button, Dropdown, Layout, Menu, Typography } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Navber, TagItem } from "./AppHeader.stc";
+import { Navber, TagItem, User } from "./AppHeader.stc";
 const { Header } = Layout;
+const { Title, Text } = Typography;
 
 export default function AppHeader() {
   const pathname = usePathname();
@@ -16,10 +16,14 @@ export default function AppHeader() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
+    const token = localStorage.getItem("token");
+
+    if (storedUser && token) {
       setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
     }
-  }, []);
+  }, [router]);
 
   const logout = () => {
     localStorage.removeItem("userData");
@@ -27,9 +31,15 @@ export default function AppHeader() {
   };
 
   const items1 = [
-    { key: "home", label: <Link href="/">Home</Link> },
+    {
+      key: "home",
+      label: <Link href="/">Home</Link>,
+    },
     { key: "dashboard", label: <Link href="/dashboard">Dashboard</Link> },
-    { key: "jobs", label: <Link href="/jobs">Jobs</Link> },
+    {
+      key: "jobs",
+      label: <Link href="/jobs">Jobs</Link>,
+    },
     { key: "cv", label: <Link href="/cv-builder">CV Builder</Link> },
     { key: "education", label: <Link href="/education">Education</Link> },
     { key: "skills", label: <Link href="/skills">Skills</Link> },
@@ -50,23 +60,9 @@ export default function AppHeader() {
   };
 
   return (
-    <Navber
-      style={{
-        backgroundColor: pathname === "/" ? "#1890ff" : theme.token.bodyBg1,
-        color: pathname === "/" ? " white" : theme.token.ColorPicker,
-      }}
-    >
-      <div className="flex items-center gap-2 min-w-0 mr-4">
-        <Link href="/">
-          <Image
-            src="/assect/cv.png"
-            alt=""
-            width={20}
-            height={20}
-            style={{ fontSize: "24px", color: theme.token.colorPrimary }}
-          />
-        </Link>
-        <span style={{ fontSize: "17px" }}>CV Builder Pro</span>
+    <Navber>
+      <div>
+        <Image src="/assect/logo.png" alt="Logo" width={95} height={75} />
       </div>
 
       <Menu
@@ -75,41 +71,35 @@ export default function AppHeader() {
         items={items1}
         className="menu-item"
         style={{ flex: 1, minWidth: 0 }}
-        theme={pathname === "/" ? "dark" : "light"}
+        theme={"light"}
       />
 
-      <div className="wrapper">
+      <div>
         {user ? (
           <div className="thing">
-            <TagItem
-              style={{
-                color: pathname === "/" ? "#1890ff" : "#f9fbfdff",
-                backgroundColor: pathname === "/" ? "#f9fbfdff" : "#1890ff",
-              }}
-            >
+            <TagItem>
               {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
             </TagItem>
             <Dropdown menu={userMenu} placement="bottomRight">
-              <Avatar
-                style={{
-                  color: pathname === "/" ? "#1890ff" : "#f9fbfdff",
-                  backgroundColor: pathname === "/" ? "#f9fbfdff" : "#1890ff",
-                  fontWeight: "bold",
-                }}
-              >
-                {getInitials(user.firstName, user.lastName)}
-              </Avatar>
+              <User>{getInitials(user.firstName, user.lastName)}</User>
             </Dropdown>
           </div>
         ) : (
-          <>
+          <div style={{ display: "flex", gap: "5px" }}>
             <Link href={"/auth/login"}>
-              <Button type="primary">Login</Button>
+              <Button
+                type="primary"
+                style={{ fontSize: "15px", fontWeight: "bold" }}
+              >
+                Login
+              </Button>
             </Link>
             <Link href={"/auth/register"}>
-              <Button>Sign Up</Button>
+              <Button style={{ fontSize: "15px", fontWeight: "bold" }}>
+                Sign Up
+              </Button>
             </Link>
-          </>
+          </div>
         )}
       </div>
     </Navber>

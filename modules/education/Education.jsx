@@ -10,21 +10,20 @@ import {
   useEducations,
   useUpdateEducation,
 } from "@/modules/education/education.query";
-import {
-  BellOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  MobileOutlined,
-} from "@ant-design/icons";
-import { Breadcrumb, Button, Card, Col, Flex, Row, Typography } from "antd";
+import { BellOutlined, MobileOutlined } from "@ant-design/icons";
+import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import Layout from "antd/es/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
+import { EditDeleteBtns, EducationListItem, EduHeader } from "./Education.stc";
 
 const { Title, Text, Paragraph } = Typography;
 
 export default function Education() {
   const { data, isLoading, error } = useEducations();
+  console.log("edu", data);
 
   const { mutate: addEducation, isLoading: creating } = useAddEducation();
   const { mutate: updateEducation, isLoading: updating } = useUpdateEducation();
@@ -91,18 +90,30 @@ export default function Education() {
     <Layout>
       <AppHeader />
 
-      <div style={{ padding: "0 48px" }} className="relative mb-3">
-        <div className="relative mb-4">
-          <Breadcrumb
-            style={{ margin: "16px 0", fontSize: "20px" }}
-            items={[{ title: "Education & Certifications" }]}
-          />
-          <Text style={{ fontSize: "12px", marginBottom: "4px" }}>
-            Manage your educational background and achievements
-          </Text>
+      <div
+        style={{ padding: "0 48px", position: "relative", marginBottom: "5px" }}
+      >
+        <div style={{ position: "relative", marginBottom: "5px" }}>
+          <div style={{ marginTop: "10px" }}>
+            <Title level={2} style={{ fontFamily: "monospace" }}>
+              Education & Certification
+            </Title>
+            <Text style={{ fontSize: "15px", marginBottom: "4px" }}>
+              Manage your educational background and achievements
+            </Text>
+          </div>
+
           <Flex gap="small" wrap className="flex-buttons">
             <Button className="w-fit">Add Certification</Button>
             <Button type="primary" className="w-fit" onClick={handleAdd}>
+              <FontAwesomeIcon
+                icon={faPlus}
+                style={{
+                  alignItems: "center",
+                  fontSize: "15px",
+                  color: "white",
+                }}
+              />{" "}
               Add Education
             </Button>
           </Flex>
@@ -125,14 +136,14 @@ export default function Education() {
                     <Card
                       key={edu.id}
                       title={
-                        <div style={{ display: "flex", gap: "15px" }}>
-                          <Title style={{ fontSize: "var(--text-xl)" }}>
+                        <EduHeader>
+                          <Title level={3} className="edu-header">
                             {edu.degree}
                           </Title>
-                          <Button type="primary" size="small" ghost>
-                            {edu.degreeType}
-                          </Button>
-                        </div>
+                          <div className="edu-div">
+                            <Tag color="blue">{edu.degreeType}</Tag>
+                          </div>
+                        </EduHeader>
                       }
                       style={{
                         width: "100%",
@@ -140,29 +151,39 @@ export default function Education() {
                         marginBottom: "10px",
                       }}
                     >
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "14px",
-                          right: 4,
-                          display: "flex",
-                          gap: "5px",
-                        }}
-                      >
+                      <EditDeleteBtns>
                         <Button
-                          icon={<EditOutlined />}
+                          icon={
+                            <FontAwesomeIcon
+                              icon={faPen}
+                              style={{
+                                alignItems: "center",
+                                fontSize: "10px",
+                                color: "white",
+                              }}
+                            />
+                          }
                           type="primary"
                           size="small"
                           onClick={() => handleEdit(edu)}
                         ></Button>
                         <Button
-                          icon={<DeleteOutlined />}
+                          icon={
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              style={{
+                                alignItems: "center",
+                                fontSize: "10px",
+                                color: "white",
+                              }}
+                            />
+                          }
                           danger
                           type="primary"
                           size="small"
                           onClick={() => handleDelete(edu.id)}
                         ></Button>
-                      </div>
+                      </EditDeleteBtns>
                       <Title level={4} style={{ color: "blue" }}>
                         <strong>{edu.institution}</strong>
                       </Title>
@@ -171,25 +192,25 @@ export default function Education() {
                           display: "flex",
                           gap: "5px",
                           color: "grey",
-                          fontSize: "var(--text-sm)",
                         }}
                       >
-                        <Text>{edu.location}</Text>|<p>{edu.startDate}</p>-
-                        <Text>{edu.endDate}</Text>|<p>{edu.gpa}</p>
+                        <Text>{edu.location}</Text>|<Text>{edu.startDate}</Text>
+                        -<Text>{edu.endDate}</Text>|
+                        <Paragraph>{edu.gpa}</Paragraph>
                       </div>
                       <Paragraph
                         style={{ color: "grey", fontSize: "var(--text-sm)" }}
                       >
                         {edu.description}
                       </Paragraph>
-                      <Text>
+                      <Text style={{ fontSize: "14px" }}>
                         <strong>Key Achievements:</strong>
                       </Text>
-                      <ul className="list-disc pl-5 text-gray-400">
+                      <EducationListItem>
                         {edu.achievements?.map((a, i) => (
                           <li key={i}>{a}</li>
                         ))}
-                      </ul>
+                      </EducationListItem>
                     </Card>
                   ))
                 )}
@@ -199,7 +220,7 @@ export default function Education() {
 
             <Col xs={24} sm={6} md={8} lg={8}>
               <Card
-                title="Experience Analytics"
+                title={<Title level={3}>Experience Analytics</Title>}
                 variant="borderless"
                 style={{ width: "100%" }}
               >
@@ -216,13 +237,19 @@ export default function Education() {
                   <Text
                     style={{
                       textAlign: "center",
-                      fontSize: "var(--text-sm)",
                       color: "grey",
+                      fontSize: "15px",
                     }}
                   >
                     Years of Education
                   </Text>
-                  <div className="flex justify-between">
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      textAlign: "center",
+                    }}
+                  >
                     <div>
                       <Title
                         level={3}
@@ -250,20 +277,20 @@ export default function Education() {
                 </Flex>
               </Card>
               <Card
-                title="AI Suggestions"
+                title={<Title level={3}>AI Suggestions</Title>}
                 variant="borderless"
                 style={{
                   marginTop: "20px",
                 }}
               >
                 <Card>
-                  <Text className="font-bold text-sm">
+                  <Text style={{ fontWeight: "bold", fontSize: "13px" }}>
                     {" "}
                     MongoDB Developer Certification
                   </Text>
-                  <Text style={{ color: "grey" }}>
+                  <Paragraph style={{ color: "grey" }}>
                     High demand in current job market
-                  </Text>
+                  </Paragraph>
                   <br />
                   <Button type="primary" size="small">
                     Get Certified
@@ -274,9 +301,9 @@ export default function Education() {
                     {" "}
                     Docker Certified Associate
                   </Text>
-                  <Text className="text-gray-400">
+                  <Paragraph style={{ color: "grey" }}>
                     Matches your experience profile
-                  </Text>
+                  </Paragraph>
                   <br />
                   <Button type="primary" size="small">
                     Get Certified
@@ -284,7 +311,7 @@ export default function Education() {
                 </Card>
               </Card>
               <Card
-                title="Quick Actions"
+                title={<Title level={3}>Quick Actions</Title>}
                 variant="borderless"
                 style={{ width: "100%", marginTop: "20px" }}
               >

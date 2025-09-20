@@ -1,3 +1,4 @@
+import FooterSection from "@/modules/components/Footer/FooterSection";
 import QueryProvider from "@/modules/components/Provider/QueryProvider";
 import theme from "@/theme/themeConfig";
 import { ConfigProvider } from "antd";
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
         <QueryProvider>
           <ConfigProvider theme={theme}>{children}</ConfigProvider>
         </QueryProvider>
+        <FooterSection />
       </body>
     </html>
   );

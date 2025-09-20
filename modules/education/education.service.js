@@ -24,6 +24,9 @@ export const createEducation = async (education) => {
       startDate: `${education.startDate}`,
       endDate: `${education.endDate}`,
       location: `${education.location}`,
+      description: `${education.description}`,
+      achievements: education.achievements?.map((a) => String(a)) || [],
+      gpa: Number(education.gpa),
     },
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });

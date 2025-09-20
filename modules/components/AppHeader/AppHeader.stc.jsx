@@ -1,50 +1,48 @@
-import { Layout, Tag } from "antd";
+import { Avatar, Layout, Tag } from "antd";
 import styled from "styled-components";
+
 const { Header } = Layout;
 
 export const Navber = styled(Header)`
-    display: flex;
-    alignItems: center;
-    width: 100%;
-    padding-inline: 16px;
-    position: sticky,
-    top: 0;
-    z-index: 1000;
-    flex-wrap: wrap;
-    gap: 2px;
-    flex-wrap:wrap;
-    gap: 2px;
+  display: flex;
+  width: 100%;
+  min-height: 80px;
+  top: 0;
+  z-index: 1000;
+  flex-wrap: wrap;
+  flex-wrap: wrap;
+  background-color: white;
+  position: sticky;
+  align-items: center;
 
-    & .menu-item{
-        flex: 1;
-        justify-content: center;
-        background:transparent;
-        font-size:15px,
-        min-width: 0;
-        overflow: hidden;
-        font-size: 14px;  
-    }
+  & .menu-item {
+    justify-content: center;
+    background: transparent;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 
-    & .wrapper{
-        display: flex;
-        gap:2px;
-        flex-shrink: 0;
-    }
+    overflow: hidden;
+  }
 
-    & .thing{
-       display :flex ;
-       align-items: center;
-       gap: 2px;
-       cursor: pointer;
-    }
-    
-
-            
+  & .thing {
+    cursor: pointer;
+  }
 `;
 export const TagItem = styled(Tag)`
-  font-size: 13px;
-  padding: 2px 7px;
-  border-radius: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 10px;
+  color: #f9fbfdff;
+  background-color: #1890ff;
 `;
 
-/*header->className = "flex-wrap gap-y-2 sm:gap-y-0"; */
+export const User = styled(Avatar)`
+  color: #f9fbfdff;
+  background: #1890ff;
+  font-weight: bold;
+  padding: 5px;
+  margin-bottom: 7px;
+`;

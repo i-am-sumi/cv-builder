@@ -19,3 +19,9 @@ export const Analytics = styled(Flex)`
     justify-content: space-between;
   }
 `;
+
+export const AchievementLists = styled.div`
+  list-style-type: disc;
+  padding-left: 20px;
+  color: #9ca3af;
+`;

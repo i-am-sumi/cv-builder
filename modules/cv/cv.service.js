@@ -1,9 +1,4 @@
-import { createFetchero } from "fetchero";
-
-export const api = createFetchero({
-  baseUrl: "https://cv-builder-production-70d3.up.railway.app",
-  headers: { Authorization: `Bearer ${token}` },
-});
+import { api } from "@/utils/restClient";
 
 export const getCVs = async () => {
   const res = await api.rest.cvs.get({ query: { page: 1, limit: 20 } });

@@ -16,7 +16,7 @@ export default function FrameworkLibraries() {
       }
       style={{ marginBottom: "10px" }}
     >
-      <Flex className="absolute top-4 right-4">
+      <Flex style={{ position: "absolute", top: "15px", right: "10px" }}>
         <Button size="small">
           <PlusOutlined />
           Add Framework

@@ -45,4 +45,15 @@ export const DashboardCard = styled(Card)`
     padding: 10px;
     border-radius: 10%;
   }
+
+  & .CV-icon {
+    background-color: #f6f9fa;
+    color: gray;
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10%;
+  }
 `;

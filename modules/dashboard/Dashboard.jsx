@@ -1,11 +1,15 @@
 "use client";
 import AppHeader from "@/modules/components/AppHeader/AppHeader";
+import { LinkedinOutlined } from "@ant-design/icons";
 import {
-  LinkedinOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  StarOutlined,
-} from "@ant-design/icons";
+  faBriefcase,
+  faChartSimple,
+  faEnvelope,
+  faPhone,
+  faSquarePollHorizontal,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Breadcrumb,
   Button,
@@ -18,11 +22,14 @@ import {
 } from "antd";
 import Layout from "antd/es/layout/layout";
 import Image from "next/image";
+import LoadingCard from "../components/LoadingCard";
+import { useJobs } from "../jobs/jobs.query";
 import { DashboardCard } from "./Dashboard.stc";
 
 const { Title, Text, Paragraph } = Typography;
 
 export default function Dashboard() {
+  const { data, isLoading } = useJobs();
   return (
     <Layout>
       <AppHeader />
@@ -39,7 +46,7 @@ export default function Dashboard() {
           ]}
         />
         <Row gutter={16}>
-          <Col span={6}>
+          <Col xs={24} sm={16} md={8} lg={6} style={{ marginBottom: "5px" }}>
             <DashboardCard variant="borderless">
               <Title level={5} style={{ color: "grey" }}>
                 Applications Sent
@@ -49,11 +56,14 @@ export default function Dashboard() {
                 <Paragraph style={{ color: " #4bf109ff" }}>
                   +12% this month
                 </Paragraph>
-                <MailOutlined className="mailOutlined-icon" />
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  className="mailOutlined-icon"
+                />
               </div>
             </DashboardCard>
           </Col>
-          <Col span={6}>
+          <Col xs={24} sm={16} md={8} lg={6} style={{ marginBottom: "5px" }}>
             <DashboardCard variant="borderless">
               <Title level={5} style={{ color: "grey" }}>
                 Interview Calls
@@ -63,11 +73,14 @@ export default function Dashboard() {
                 <Paragraph style={{ color: " #4bf109ff" }}>
                   +67% this month
                 </Paragraph>
-                <PhoneOutlined className="phoneOutlined-icon" />
+                <FontAwesomeIcon
+                  icon={faPhone}
+                  className="phoneOutlined-icon"
+                />
               </div>
             </DashboardCard>
           </Col>
-          <Col span={6}>
+          <Col xs={24} sm={16} md={8} lg={6} style={{ marginBottom: "5px" }}>
             <DashboardCard variant="borderless">
               <Title level={5} style={{ color: "grey" }}>
                 CVs Created
@@ -77,17 +90,14 @@ export default function Dashboard() {
                 <Paragraph style={{ color: " #4bf109ff" }}>
                   +3 this month
                 </Paragraph>
-                <Image
-                  src="/assect/cv.png"
-                  width={40}
-                  height={40}
-                  alt=""
+                <FontAwesomeIcon
+                  icon={faSquarePollHorizontal}
                   className="CV-icon"
                 />
               </div>
             </DashboardCard>
           </Col>
-          <Col span={6}>
+          <Col xs={24} sm={16} md={8} lg={6} style={{ marginBottom: "5px" }}>
             <DashboardCard variant="borderless">
               <Title level={5} style={{ color: "grey" }}>
                 Profile Score
@@ -97,7 +107,7 @@ export default function Dashboard() {
                 <Paragraph style={{ color: " #f1c609ff" }}>
                   +5% improvement{" "}
                 </Paragraph>
-                <StarOutlined className="star-icon" />
+                <FontAwesomeIcon icon={faStar} className="star-icon" />
               </div>
             </DashboardCard>
           </Col>
@@ -129,61 +139,39 @@ export default function Dashboard() {
                     </Button>
                   }
                 >
-                  <Card type="inner" style={{ position: "relative" }}>
-                    <Title style={{ fontSize: "18px" }}>
-                      Senior Frontend Developer
-                    </Title>
-                    <Text style={{ fontSize: "14px", color: "blue" }}>
-                      TechCorp Inc.
-                    </Text>
-                    <Paragraph>San Francisco,CA(Remote)</Paragraph>
-                    <Flex gap="4px 0" wrap>
-                      <Tag color="processing">React</Tag>
-                      <Tag color="processing">TypeScript</Tag>
-                      <Tag color="processing">Node.js</Tag>
-                    </Flex>
-                    <Flex gap="small" wrap style={{ marginTop: "10px" }}>
-                      <Button type="primary" size="small">
-                        Generate CV
-                      </Button>
-                      <Button size="small">View Details</Button>
-                      <Tag
-                        color="green"
-                        style={{ position: "absolute", top: 10, right: 10 }}
-                      >
-                        95% Match
-                      </Tag>
-                    </Flex>
-                  </Card>
-                  <Card
-                    type="inner"
-                    style={{ marginTop: 16, position: "relative" }}
-                  >
-                    <Title style={{ fontSize: "18px" }}>
-                      Full Stack Engineer
-                    </Title>
-                    <Text style={{ fontSize: "15px", color: "blue" }}>
-                      StartupXYZ
-                    </Text>
-                    <Paragraph>New York,NY</Paragraph>
-                    <Flex gap="4px 0" wrap>
-                      <Tag color="processing">Python</Tag>
-                      <Tag color="processing">Django</Tag>
-                      <Tag color="processing">React</Tag>
-                    </Flex>
-                    <Flex gap="small" wrap style={{ marginTop: "10px" }}>
-                      <Button type="primary" size="small">
-                        Generate CV
-                      </Button>
-                      <Button size="small">View Details</Button>
-                    </Flex>
-                    <Tag
-                      color="volcano"
-                      style={{ position: "absolute", top: 10, right: 10 }}
-                    >
-                      87% Match
-                    </Tag>
-                  </Card>
+                  {isLoading ? (
+                    <LoadingCard />
+                  ) : (
+                    data?.map((skill) => (
+                      <Card type="inner" style={{ position: "relative" }}>
+                        <Title level={4}>{skill.title}</Title>
+                        <Text style={{ fontSize: "14px", color: "blue" }}>
+                          {skill.company}
+                        </Text>
+                        <Paragraph>
+                          {" "}
+                          {`${skill.location} (${skill.workLocation})`}
+                        </Paragraph>
+                        <Flex gap="4px 0" wrap>
+                          {skill?.skills?.map((item) => (
+                            <Tag color="processing">{item}</Tag>
+                          ))}
+                        </Flex>
+                        <Flex gap="small" wrap style={{ marginTop: "10px" }}>
+                          <Button type="primary" size="small">
+                            Generate CV
+                          </Button>
+                          <Button size="small">View Details</Button>
+                          <Tag
+                            color="green"
+                            style={{ position: "absolute", top: 10, right: 10 }}
+                          >
+                            95% Match
+                          </Tag>
+                        </Flex>
+                      </Card>
+                    ))
+                  )}
                 </Card>
               </div>
             </Col>
@@ -208,16 +196,9 @@ export default function Dashboard() {
                     Create New CV
                   </Button>
                   <Button block>
-                    <Image
-                      src="/assect/jobIcon.png"
-                      alt=""
-                      width={20}
-                      height={20}
-                      style={{
-                        color: "#faa506ff",
-                        marginRight: "6px",
-                        fontSize: "16px",
-                      }}
+                    <FontAwesomeIcon
+                      icon={faBriefcase}
+                      style={{ fontSize: "18px", color: "orange" }}
                     />
                     Browse Jobs
                   </Button>
@@ -225,7 +206,7 @@ export default function Dashboard() {
                     {" "}
                     <LinkedinOutlined
                       style={{
-                        color: "#6306faff",
+                        color: "#1e06fa",
                         marginRight: "6px",
                         fontSize: "16px",
                       }}
@@ -234,16 +215,9 @@ export default function Dashboard() {
                   </Button>
                   <Button block>
                     {" "}
-                    <Image
-                      src="/assect/analytices.png"
-                      alt=""
-                      width={20}
-                      height={20}
-                      style={{
-                        color: "#5209c9ff",
-                        marginRight: "6px",
-                        fontSize: "16px",
-                      }}
+                    <FontAwesomeIcon
+                      icon={faChartSimple}
+                      style={{ color: "blue" }}
                     />
                     View Analytics
                   </Button>

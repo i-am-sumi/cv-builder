@@ -11,15 +11,10 @@ import {
 } from "@/modules/experience/experience.query";
 import {
   BulbOutlined,
-  CalendarOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EnvironmentOutlined,
   FileTextOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import {
-  Breadcrumb,
   Button,
   Card,
   Col,
@@ -31,15 +26,24 @@ import {
   Typography,
 } from "antd";
 
+import {
+  faCalendarWeek,
+  faLocationDot,
+  faPen,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Layout from "antd/es/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
-import { Analytics } from "./Experience.stc";
+import { EducationSection } from "../education/Education.stc";
+import { AchievementLists, Analytics } from "./Experience.stc";
 
 const { Title, Text, Paragraph } = Typography;
 
 export default function Experience() {
   const { data, isLoading, error } = useExperiences();
+  console.log("exp", data);
   const { mutate: addExperience, isLoading: creating } = useAddExperience();
   const { mutate: updateExperience, isLoading: updating } =
     useUpdateExperience();
@@ -105,15 +109,16 @@ export default function Experience() {
     <Layout>
       <AppHeader />
 
-      <div style={{ padding: "0 48px" }}>
+      <EducationSection>
         <div style={{ position: "relative", marginBottom: "5px" }}>
-          <Breadcrumb
-            style={{ margin: "16px 0", fontSize: "20px" }}
-            items={[{ title: "Work Experience" }]}
-          />
-          <p style={{ fontSize: "13px", marginBottom: "5px" }}>
-            Manage your professional experience
-          </p>
+          <div style={{ marginTop: "10px" }}>
+            <Title level={2} style={{ fontFamily: "monospace" }}>
+              Work Experience
+            </Title>
+            <Text style={{ fontSize: "14px", marginBottom: "5px" }}>
+              Manage your professional experience
+            </Text>
+          </div>
           <Flex gap="small" wrap className="flex-buttons">
             <Button>Import LinkedIn</Button>
             <Button type="primary" onClick={handleAdd}>
@@ -136,12 +141,8 @@ export default function Experience() {
                   <LoadingCard />
                 ) : (
                   data?.experiences?.map((exp) => (
-                    <Card
-                      key={exp.id}
-                      style={{ width: "100%", boxShadow: " var(--shadow-md)" }}
-                      className="shadow-md w-full"
-                    >
-                      <div className="flex justify-between items-start gap-2 mb-4">
+                    <Card key={exp.id} className="education-card">
+                      <div className="education-card-item">
                         <Title level={3}>{exp.jobTitle}</Title>
 
                         <div
@@ -152,13 +153,31 @@ export default function Experience() {
                           }}
                         >
                           <Button
-                            icon={<EditOutlined />}
+                            icon={
+                              <FontAwesomeIcon
+                                icon={faPen}
+                                style={{
+                                  alignItems: "center",
+                                  fontSize: "15px",
+                                  color: "white",
+                                }}
+                              />
+                            }
                             type="primary"
                             size="small"
                             onClick={() => handleEdit(exp)}
                           ></Button>
                           <Button
-                            icon={<DeleteOutlined />}
+                            icon={
+                              <FontAwesomeIcon
+                                icon={faTrash}
+                                style={{
+                                  alignItems: "center",
+                                  fontSize: "15px",
+                                  color: "white",
+                                }}
+                              />
+                            }
                             danger
                             type="primary"
                             size="small"
@@ -171,14 +190,26 @@ export default function Experience() {
                         {exp.company}
                       </Title>
 
-                      <div className="flex flex-wrap gap-2 text-gray-400 text-sm items-center">
-                        <EnvironmentOutlined style={{ color: "#f5550c" }} />
+                      <div className="education-div">
+                        <FontAwesomeIcon
+                          icon={faLocationDot}
+                          style={{
+                            alignItems: "center",
+                            fontSize: "15px",
+                            color: "blue",
+                          }}
+                        />
                         <Text style={{ color: "gray" }}>{exp.location}</Text>
                         <span>|</span>
-                        <CalendarOutlined style={{ color: "#f08e0e" }} />
-                        <Text style={{ color: "gray" }}>
-                          {exp.startDate}
-                        </Text> -{" "}
+                        <FontAwesomeIcon
+                          icon={faCalendarWeek}
+                          style={{
+                            alignItems: "center",
+                            fontSize: "15px",
+                            color: "orange",
+                          }}
+                        />
+                        <Text style={{ color: "gray" }}>{exp.startDate}</Text> -{" "}
                         <Text style={{ color: "gray" }}>{exp.endDate}</Text>
                       </div>
 
@@ -187,14 +218,14 @@ export default function Experience() {
                       </Paragraph>
 
                       <Text>Key Achievements:</Text>
-                      <ul className="list-disc pl-5 text-gray-400">
+                      <AchievementLists>
                         {exp.achievements?.map((a, i) => (
                           <li key={i}>{a}</li>
                         ))}
-                      </ul>
+                      </AchievementLists>
 
                       <Text>Technologies:</Text>
-                      <div className="flex flex-wrap gap-2 mt-1">
+                      <div className="education-item">
                         {exp.technologies?.map((t, i) => (
                           <Tag color="blue" key={i}>
                             {t}
@@ -330,7 +361,7 @@ export default function Experience() {
             </Col>
           </Row>
         </Layout>
-      </div>
+      </EducationSection>
 
       <ExperienceModal
         open={modalOpen}

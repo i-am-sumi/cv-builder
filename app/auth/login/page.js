@@ -6,9 +6,20 @@ import {
   GoogleOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Checkbox, Flex, Form, Input, Layout } from "antd";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Flex,
+  Form,
+  Input,
+  Layout,
+  Typography,
+} from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+const { Title, Text, Paragraph } = Typography;
 
 const LoginForm = () => {
   const router = useRouter();
@@ -77,7 +88,7 @@ const LoginForm = () => {
                 borderRadius: "5px",
               }}
             />
-            <h1 style={{ fontSize: "20px", font: "bold" }}>CV Builder Pro</h1>
+            <Title level={2}>CV Builder Pro</Title>
           </div>
           <div
             style={{
@@ -86,12 +97,12 @@ const LoginForm = () => {
               marginBottom: "10px",
             }}
           >
-            <h1 style={{ fontSize: "20px", font: "bold", marginTop: "10px" }}>
+            <Title level={3} style={{ font: "bold", marginTop: "10px" }}>
               Welcome Back
-            </h1>
-            <p style={{ fontSize: "14px", color: "gray" }}>
+            </Title>
+            <Text style={{ fontSize: "14px", color: "gray" }}>
               Sign in to your account to continue building amazing CVs
-            </p>
+            </Text>
           </div>
           <Flex vertical gap="small" style={{ width: "100%" }}>
             <Button block>
@@ -105,7 +116,7 @@ const LoginForm = () => {
             </Button>
           </Flex>
         </div>
-        <p
+        <Text
           style={{
             color: "gray",
             fontSize: "15px",
@@ -114,7 +125,7 @@ const LoginForm = () => {
           }}
         >
           or sign in with email
-        </p>
+        </Text>
 
         <div className="flex items-center">
           <Form

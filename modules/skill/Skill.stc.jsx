@@ -7,12 +7,13 @@ export const SkillComponents = styled.div`
   padding: 0 48px;
 
   & .breadcrumb {
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     overflow-wrap: break-word;
     line-height: 16px;
     flex: 1 1 0%;
     margin: 16px 0;
+    font-family: monospace;
 
     @media (min-width: 640px;) {
       font-size: large;

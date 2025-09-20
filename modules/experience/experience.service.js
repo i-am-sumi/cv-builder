@@ -15,7 +15,7 @@ export const getExperience = async ({ queryKey }) => {
 };
 
 export const createExperience = async (experience) => {
-  const res = await api.rest.experiences().post({
+  const res = await api.rest.experiences.post({
     body: {
       jobTitle: `${experience.jobTitle}`,
       company: `${experience.company}`,
@@ -23,7 +23,7 @@ export const createExperience = async (experience) => {
       startDate: `${experience.startDate}`,
       endDate: `${experience.endDate}`,
       description: `${experience.description}`,
-      achievments: `${experience.achievements}`,
+      achievements: experience.achievements?.map((a) => String(a)) || [],
       technologies: Array.isArray(experience.technologies)
         ? experience.technologies
         : experience.technologies.split(",").map((t) => t.trim()),
