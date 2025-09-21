@@ -50,7 +50,8 @@ export const Section = styled.section`
   position: relative;
   padding: 20px;
 
-  background-image: url("/assect/homebg3.jpg");
+  background: linear-gradient(to right, #a6a6ec, #fa04ee);
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -64,7 +65,7 @@ export const HomeSectionCard = styled(Card)`
   backdrop-filter: blur(4px);
   webkitbackdrop-filter: blur(4px);
   data-aos: fade-right;
-  border: 1px solid orange;
+  border: none;
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;

@@ -8,16 +8,10 @@ import {
   useSkills,
   useUpdateSkill,
 } from "@/modules/skill/skill.query";
-import {
-  DockerOutlined,
-  GithubOutlined,
-  LaptopOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { LaptopOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   faChalkboard,
   faCloud,
-  faDatabase,
   faPen,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -33,15 +27,16 @@ import {
   Row,
   Tag,
   Typography,
+  message,
 } from "antd";
-import Image from "next/image";
 import { useState } from "react";
 import SkillModal from "../components/modal/SkillModal";
 import { SkillComponents, ToolsCard } from "./Skill.stc";
+
 const { Title, Text, Paragraph } = Typography;
 
 export default function Skill() {
-  const { data, isLoading, error } = useSkills();
+  const { data, isLoading } = useSkills();
   const { mutate: addSkill, isLoading: creating } = useAddSkill();
   const { mutate: updateSkill, isLoading: updating } = useUpdateSkill();
   const { mutate: deleteSkill } = useDeleteSkill();
@@ -60,24 +55,16 @@ export default function Skill() {
   };
 
   const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this experience?")) {
+    if (confirm("Are you sure you want to delete this skill?")) {
       deleteSkill(id, {
-        onSuccess: () => message.success("Experience deleted successfully"),
+        onSuccess: () => message.success("Skill deleted successfully"),
         onError: () => message.error("Failed to delete"),
       });
     }
   };
 
   const handleSubmit = (formValues) => {
-    const payload = {
-      ...formValues,
-      achievements: formValues.achievements
-        ? formValues.achievements.split(",").map((item) => item.trim())
-        : [],
-      technologies: formValues.technologies
-        ? formValues.technologies.split(",").map((item) => item.trim())
-        : [],
-    };
+    const payload = { ...formValues };
 
     if (selectedSkill) {
       updateSkill(
@@ -85,9 +72,8 @@ export default function Skill() {
         {
           onSuccess: () => {
             setModalOpen(false);
-            message.success("Education updated");
-
             setSelectedSkill(null);
+            message.success("Skill updated successfully");
           },
           onError: () => message.error("Update failed"),
         }
@@ -96,346 +82,206 @@ export default function Skill() {
       addSkill(payload, {
         onSuccess: () => {
           setModalOpen(false);
-          message.success("Education added");
+          message.success("Skill added successfully");
         },
         onError: () => message.error("Creation failed"),
       });
     }
   };
 
-  console.log("skill", data);
+  const programmingSkills = data?.skills?.filter(
+    (s) => s.category === "language" || s.category === "technical"
+  );
+  const tools = data?.skills?.filter((s) => s.category === "tool");
+  const softSkills = data?.skills?.filter((s) => s.category === "soft_skill");
+
   return (
     <Layout>
       <AppHeader />
       <SkillComponents>
         <div style={{ position: "relative", marginBottom: "10px" }}>
+          {" "}
           <Breadcrumb
             items={[{ title: "Skills & Competencies" }]}
             className="breadcrumb"
-          />
+          />{" "}
           <Text style={{ fontSize: "13px", marginBottom: "5px" }}>
-            Manage your technical and soft skills
-          </Text>
+            {" "}
+            Manage your technical and soft skills{" "}
+          </Text>{" "}
           <Flex gap="small" wrap className="flex-buttons">
-            <Button className="w-fit">Skills Assessment</Button>
+            {" "}
+            <Button className="w-fit">Skills Assessment</Button>{" "}
             <Button type="primary" className="w-fit" onClick={handleAdd}>
-              <PlusOutlined /> Add skill
-            </Button>
-          </Flex>
+              {" "}
+              <PlusOutlined /> Add skill{" "}
+            </Button>{" "}
+          </Flex>{" "}
         </div>
+
         <Layout style={{ padding: "24px 0" }}>
           <Row gutter={[16, 16]}>
-            <Col xs={24} sm={16} md={16} lg={16}>
+            <Col xs={24} md={16}>
               <Card
                 title={
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faChalkboard}
-                      style={{ fontSize: "15px", paddingTop: "10px" }}
-                    />
-
-                    <Title level={4} style={{ marginTop: "5px" }}>
-                      {" "}
+                  <Flex gap="small" align="center">
+                    <FontAwesomeIcon icon={faChalkboard} />
+                    <Title level={4} style={{ margin: 0 }}>
                       Programming Languages
                     </Title>
-                  </div>
+                  </Flex>
+                }
+                extra={
+                  <Button size="small" onClick={handleAdd}>
+                    <PlusOutlined /> Add
+                  </Button>
                 }
                 style={{ marginBottom: "10px" }}
               >
-                <Flex className="absolute top-4 right-4">
-                  <Button size="small">
-                    <PlusOutlined />
-                    Add Skills
-                  </Button>
-                </Flex>
-
-                <Flex gap="small" vertical style={{ width: "95%" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      flexDirection: "column",
-                    }}
-                  >
-                    {isLoading ? (
-                      <LoadingCard />
-                    ) : (
-                      data?.skills?.map((skill) => (
-                        <div key={skill.id}>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <div style={{ width: "100%" }}>
-                              <div style={{ display: "flex", gap: "5px" }}>
-                                <Text style={{ font: "icon" }}>
-                                  {skill.name}
-                                  <Tag
-                                    color="green"
-                                    style={{
-                                      marginLeft: "6px",
-                                      fontSize: "12px",
-                                    }}
-                                  >
-                                    {skill.level}
-                                  </Tag>
-                                </Text>
-
-                                <Paragraph style={{ color: "grey" }}>
-                                  {skill.yearsOfExperience}+ years
-                                </Paragraph>
-                              </div>
-                              <Progress
-                                percent={Math.min(
-                                  (skill.yearsOfExperience / 10) * 100,
-                                  100
-                                )}
-                                showInfo={false}
-                                strokeColor={
-                                  skill.yearsOfExperience >= 5
-                                    ? "#0cfc34ff"
-                                    : skill.yearsOfExperience >= 3
-                                    ? "#3f4bf3ff"
-                                    : "#fcec0aff"
-                                }
-                                size={"defult"}
-                              />
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                gap: "10px",
-                                alignItems: "center",
-                              }}
+                {isLoading ? (
+                  <LoadingCard />
+                ) : (
+                  programmingSkills?.map((skill) => (
+                    <Flex
+                      key={skill.id}
+                      justify="space-between"
+                      align="center"
+                      style={{ marginBottom: "12px" }}
+                    >
+                      <div style={{ width: "100%" }}>
+                        <div style={{ display: "flex", gap: "5px" }}>
+                          {" "}
+                          <Text style={{ font: "icon" }}>
+                            {" "}
+                            {skill.name}{" "}
+                            <Tag
+                              color="green"
+                              style={{ marginLeft: "6px", fontSize: "12px" }}
                             >
-                              <Button
-                                style={{}}
-                                type="primary"
-                                size="small"
-                                onClick={() => handleEdit(skill)}
-                              >
-                                <FontAwesomeIcon
-                                  icon={faPen}
-                                  style={{
-                                    alignItems: "center",
-                                    fontSize: "10px",
-                                    color: "white",
-                                  }}
-                                />
-                              </Button>
-                              <Button
-                                type="primary"
-                                size="small"
-                                danger
-                                onClick={() => {
-                                  handleDelete(skill.id);
-                                }}
-                              >
-                                <FontAwesomeIcon
-                                  icon={faTrash}
-                                  style={{
-                                    alignItems: "center",
-                                    fontSize: "10px",
-                                    color: "white",
-                                  }}
-                                />
-                              </Button>
-                            </div>
-                          </div>
+                              {" "}
+                              {skill.level}{" "}
+                            </Tag>{" "}
+                          </Text>{" "}
+                          <Paragraph style={{ color: "grey" }}>
+                            {" "}
+                            {skill.yearsOfExperience}+ years{" "}
+                          </Paragraph>{" "}
                         </div>
-                      ))
-                    )}
-                  </div>
-                </Flex>
+                        <Progress
+                          percent={Math.min(
+                            (skill.yearsOfExperience / 10) * 100,
+                            100
+                          )}
+                          showInfo={false}
+                          strokeColor={
+                            skill.yearsOfExperience >= 5
+                              ? "#0cfc34ff"
+                              : skill.yearsOfExperience >= 3
+                              ? "#3f4bf3ff"
+                              : "#fcec0aff"
+                          }
+                        />
+                      </div>
+                      <Flex gap="small">
+                        <Button
+                          type="primary"
+                          size="small"
+                          onClick={() => handleEdit(skill)}
+                        >
+                          <FontAwesomeIcon icon={faPen} />
+                        </Button>
+                        <Button
+                          type="primary"
+                          size="small"
+                          danger
+                          onClick={() => handleDelete(skill.id)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  ))
+                )}
               </Card>
-              <FrameworkLibraries />
+
+              <FrameworkLibraries skills={data?.skills || []} />
+
               <Card
                 title={
-                  <div style={{ display: "flex", gap: "10px" }}>
+                  <Flex gap="small" align="center">
                     <LaptopOutlined />
-                    <Title level={4} style={{ marginTop: "5px" }}>
+                    <Title level={4} style={{ margin: 0 }}>
                       Tools & Technologies
                     </Title>
-                  </div>
+                  </Flex>
                 }
-                style={{ position: "relative", marginBottom: "10px" }}
-              >
-                <Text
-                  style={{ position: "absolute", top: "15px", right: "4px" }}
-                >
-                  <Button size="small">
-                    <PlusOutlined />
-                    Add Tool
+                extra={
+                  <Button size="small" onClick={handleAdd}>
+                    <PlusOutlined /> Add
                   </Button>
-                </Text>
+                }
+              >
                 <Row gutter={16}>
-                  <Col
-                    xs={24}
-                    sm={16}
-                    md={12}
-                    lg={6}
-                    style={{ marginBottom: "5px" }}
-                  >
-                    <ToolsCard variant="borderless">
-                      <Paragraph style={{ textAlign: "center" }}>
-                        {" "}
-                        <FontAwesomeIcon
-                          icon={faCloud}
-                          style={{
-                            alignItems: "center",
-                            fontSize: "27px",
-                            color: "cyan",
-                          }}
-                        />
-                      </Paragraph>
-                      <Paragraph className="paragraph">AWS</Paragraph>
-                      <Tag color="blue">Advanced</Tag>
-                    </ToolsCard>
-                  </Col>
-                  <Col
-                    xs={24}
-                    sm={18}
-                    md={12}
-                    lg={6}
-                    style={{ marginBottom: "5px" }}
-                  >
-                    <Card
-                      variant="borderless"
-                      style={{ display: "flex", justifyContent: "center" }}
-                    >
-                      {" "}
-                      <Paragraph style={{ textAlign: "center" }}>
-                        {" "}
-                        <DockerOutlined
-                          style={{ fontSize: "30px", color: "#2fb0ebff" }}
-                        />
-                      </Paragraph>
-                      <Paragraph className="paragraph">Docker</Paragraph>
-                      <Tag color="orange">Intermediate</Tag>
-                    </Card>
-                  </Col>
-                  <Col
-                    xs={24}
-                    sm={16}
-                    md={12}
-                    lg={6}
-                    style={{ marginBottom: "5px" }}
-                  >
-                    <Card
-                      variant="borderless"
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {" "}
-                      <Paragraph style={{ textAlign: "center" }}>
-                        {" "}
-                        <GithubOutlined
-                          style={{ fontSize: "30px", color: "#2fb0ebff" }}
-                        />
-                      </Paragraph>
-                      <Paragraph className="paragraph">Github</Paragraph>
-                      <Tag color="green">Expert</Tag>
-                    </Card>
-                  </Col>
-                  <Col
-                    xs={24}
-                    sm={16}
-                    md={12}
-                    lg={6}
-                    style={{ marginBottom: "5px" }}
-                  >
-                    <Card
-                      variant="borderless"
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {" "}
-                      <Paragraph
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        {" "}
-                        <FontAwesomeIcon
-                          icon={faDatabase}
-                          style={{
-                            alignItems: "center",
-                            fontSize: "27px",
-                            color: "blue",
-                          }}
-                        />
-                      </Paragraph>
-                      <Paragraph className="paragraph">MongoDB</Paragraph>
-                      <Tag color="blue">Advanced</Tag>
-                    </Card>
-                  </Col>
+                  {tools?.map((ts) => (
+                    <Col xs={24} sm={12} md={8} lg={6} key={ts.id}>
+                      <ToolsCard>
+                        <Paragraph style={{ textAlign: "center" }}>
+                          <FontAwesomeIcon
+                            icon={faCloud}
+                            style={{ fontSize: "27px", color: "cyan" }}
+                          />
+                        </Paragraph>
+                        <Paragraph
+                          className="paragraph"
+                          style={{ textAlign: "center" }}
+                        >
+                          {ts.name}
+                        </Paragraph>
+                        <Tag color="blue">{ts.level}</Tag>
+                      </ToolsCard>
+                    </Col>
+                  ))}
                 </Row>
               </Card>
+
               <Card
                 title={
-                  <div style={{ display: "flex", gap: "10px" }}>
+                  <Flex gap="small" align="center">
                     <LaptopOutlined />
-                    <Title level={4} style={{ marginTop: "5px" }}>
-                      {" "}
+                    <Title level={4} style={{ margin: 0 }}>
                       Soft Skills
                     </Title>
-                  </div>
+                  </Flex>
                 }
-                style={{ position: "relative" }}
-              >
-                <Text
-                  style={{ position: "absolute", top: "14px", right: "4px" }}
-                >
-                  <Button size="small">
-                    <PlusOutlined />
-                    Add Tool
+                extra={
+                  <Button size="small" onClick={handleAdd}>
+                    <PlusOutlined /> Add
                   </Button>
-                </Text>
-                <div>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Team Leadership
-                  </Tag>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Problem Solving
-                  </Tag>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Communication
-                  </Tag>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Mentoring
-                  </Tag>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Agile Methodologies
-                  </Tag>
-                  <Tag
-                    style={{
-                      padding: "10px",
-                      fontSize: "13px",
-                      marginTop: "5px",
-                    }}
-                  >
-                    Project Management
-                  </Tag>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Code Review
-                  </Tag>
-                  <Tag style={{ padding: "10px", fontSize: "13px" }}>
-                    Technical Writing
-                  </Tag>
-                </div>
+                }
+              >
+                {softSkills?.length ? (
+                  softSkills.map((s) => (
+                    <Tag
+                      key={s.id}
+                      style={{
+                        padding: "10px",
+                        fontSize: "13px",
+                        margin: "5px",
+                      }}
+                      color="cyan"
+                    >
+                      {s.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text type="secondary">No soft skills added yet.</Text>
+                )}
               </Card>
             </Col>
-            <Col xs={24} sm={4} md={8} lg={8}>
-              <Card
-                title={<Title level={4}>Skills Overview</Title>}
-                variant="borderless"
-                style={{ width: "100%" }}
-              >
-                <Flex gap="small" vertical>
+
+            <Col xs={24} md={8}>
+              <Card title={<Title level={4}>Skills Overview</Title>} bordered>
+                <Flex vertical gap="small">
                   <Title
                     style={{
                       fontSize: "30px",
@@ -454,110 +300,13 @@ export default function Skill() {
                   >
                     Market Relevance Score
                   </Text>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text>Technical Skills</Text>
-
-                    <Text style={{ color: "grey" }}>18 skills</Text>
-                  </div>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text>Expert Level</Text>
-
-                    <Text style={{ color: "green" }}>5 skills</Text>
-                  </div>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text>Learning</Text>
-                    <Paragraph style={{ color: "orange" }}>3 skills</Paragraph>
-                  </div>
-                </Flex>
-              </Card>
-              <Card
-                title={<Title level={4}>Trending Skills</Title>}
-                variant="borderless"
-                style={{
-                  marginTop: "20px",
-                }}
-              >
-                <Card>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    <Text style={{ font: "icon", fontSize: "14px" }}>
-                      {" "}
-                      GraphQL
-                    </Text>
-                    <Paragraph style={{ color: "green" }}>
-                      ↗ 35% demand
-                    </Paragraph>
-                  </div>
-                  <Text style={{ color: "grey" }}>
-                    API technology trending in React jobs
-                  </Text>
-                  <br />
-                  <Button type="primary" size="small">
-                    Get Certified
-                  </Button>
-                </Card>
-                <Card>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    <Text style={{ font: "icon", fontSize: "14px" }}>
-                      {" "}
-                      Kubernetes
-                    </Text>
-                    <Paragraph style={{ color: "green" }}>
-                      ↗ 28% demand
-                    </Paragraph>
-                  </div>
-                  <Text style={{ color: "grey" }}>
-                    Container orchestration in high demand
-                  </Text>
-                  <br />
-                  <Button type="primary" size="small">
-                    Get Certified
-                  </Button>
-                </Card>
-              </Card>
-              <Card
-                title={<Title level={4}>Skill Actions</Title>}
-                variant="borderless"
-                style={{ width: "100%", marginTop: "20px" }}
-              >
-                <Flex
-                  vertical
-                  gap="small"
-                  style={{ width: "100%", fontSize: "12px" }}
-                >
-                  <Button type="primary" block>
-                    <Image
-                      src="/assect/AiIcon.png"
-                      alt="AI Icon"
-                      width={20}
-                      height={20}
-                    />
-                    Generate Education Report
-                  </Button>
-                  <Button block>Set Renewal Reminders</Button>
                 </Flex>
               </Card>
             </Col>
           </Row>
         </Layout>
       </SkillComponents>
+
       <SkillModal
         open={modalOpen}
         onCancel={() => {
@@ -567,7 +316,6 @@ export default function Skill() {
         onSubmit={handleSubmit}
         initialData={selectedSkill}
         loading={creating || updating}
-        type="skill"
       />
     </Layout>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Form, Input, Modal } from "antd";
+import { Form, Input, Modal, Select } from "antd";
 import { useEffect } from "react";
 
 export default function SkillModal({
@@ -15,8 +15,6 @@ export default function SkillModal({
   useEffect(() => {
     if (initialData) {
       form.setFieldsValue(initialData);
-    } else {
-      form.resetFields();
     }
   }, [initialData, form]);
 
@@ -28,18 +26,49 @@ export default function SkillModal({
       onOk={() => form.submit()}
       okText={initialData ? "Update" : "Create"}
       confirmLoading={loading}
+      afterClose={() => form.resetFields()} // modal বন্ধ হওয়ার পর clear হবে
     >
       <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <Form.Item name="name" label="Skill Name">
+        <Form.Item
+          name="name"
+          label="Skill Name"
+          rules={[{ required: true, message: "Please enter skill name" }]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name="level" label="Proficiency Level">
+
+        <Form.Item
+          name="level"
+          label="Proficiency Level"
+          rules={[
+            { required: true, message: "Please enter proficiency level" },
+          ]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name="category" label="Category">
-          <Input placeholder="technical / soft_skill / language / tool / framework / other" />
+
+        <Form.Item
+          name="category"
+          label="Category"
+          rules={[{ required: true, message: "Please select a category" }]}
+        >
+          <Select placeholder="Select a category">
+            <Select.Option value="technical">Technical</Select.Option>
+            <Select.Option value="soft_skill">Soft Skill</Select.Option>
+            <Select.Option value="language">Language</Select.Option>
+            <Select.Option value="tool">Tool</Select.Option>
+            <Select.Option value="framework">Framework</Select.Option>
+            <Select.Option value="other">Other</Select.Option>
+          </Select>
         </Form.Item>
-        <Form.Item name="yearsOfExperience" label="Years Of Experience">
+
+        <Form.Item
+          name="yearsOfExperience"
+          label="Years Of Experience"
+          rules={[
+            { required: true, message: "Please enter years of experience" },
+          ]}
+        >
           <Input type="number" />
         </Form.Item>
       </Form>

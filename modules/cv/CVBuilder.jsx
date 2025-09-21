@@ -1,9 +1,6 @@
 "use client";
 
 import AppHeader from "@/modules/components/AppHeader/AppHeader";
-import CVIcon from "@/modules/components/SvgForder/CV";
-import EducationIcon from "@/modules/components/SvgForder/EducationIcon";
-import ExperienceIcon from "@/modules/components/SvgForder/Experiences";
 
 import Icon from "@ant-design/icons";
 import {

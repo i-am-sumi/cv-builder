@@ -117,7 +117,7 @@ export default function HomeSection() {
                     style={{
                       textAlign: "center",
                       fontSize: "18px",
-                      color: "blue",
+                      color: "white",
                     }}
                   >
                     {item.span}

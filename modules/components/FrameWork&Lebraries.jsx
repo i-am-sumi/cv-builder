@@ -1,9 +1,13 @@
 import { LaptopOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Flex, Progress, Row, Tag, Typography } from "antd";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
-export default function FrameworkLibraries() {
+export default function FrameworkLibraries({ skills = [] }) {
+  const frameworks = skills.filter(
+    (skill) => skill.category === "framework" || skill.category === "frameworks"
+  );
+
   return (
     <Card
       title={
@@ -18,67 +22,33 @@ export default function FrameworkLibraries() {
     >
       <Flex style={{ position: "absolute", top: "15px", right: "10px" }}>
         <Button size="small">
-          <PlusOutlined />
-          Add Framework
+          <PlusOutlined /> Add Framework
         </Button>
       </Flex>
+
       <Row gutter={16}>
-        <Col xs={24} sm={16} md={12} lg={8}>
-          <Card variant="borderless" style={{ marginTop: "5px " }}>
-            <Text style={{ fontSize: "14px", fontWeight: "bold" }}>
-              React.js
-            </Text>
-            <Tag color="green">Expert</Tag>
-            <Progress
-              percent={90}
-              showInfo={false}
-              strokeColor="#73f311ff"
-              size={"default"}
-            />
-          </Card>
-        </Col>
-        <Col span={8} xs={24} sm={16} md={12} lg={8}>
-          <Card variant="borderless" style={{ marginTop: "5px " }}>
-            <Text style={{ fontSize: "14px", fontWeight: "bold" }}>
-              Node.js
-            </Text>
-            <Tag color="blue">Advanced</Tag>
-            <Progress
-              percent={90}
-              showInfo={false}
-              strokeColor="#5c87ffff"
-              size={"default"}
-            />
-          </Card>
-        </Col>
-        <Col span={8} xs={24} sm={16} md={12} lg={8}>
-          <Card variant="borderless" style={{ marginTop: "5px " }}>
-            <Text style={{ fontSize: "14px", fontWeight: "bold" }}>
-              Express.js
-            </Text>
-            <Tag color="blue">Advanced</Tag>
-            <Progress
-              percent={90}
-              showInfo={false}
-              strokeColor="#5982f1ff"
-              size={"default"}
-            />
-          </Card>
-        </Col>
-        <Col span={8} xs={24} sm={16} md={12} lg={8}>
-          <Card variant="borderless" style={{ marginTop: "5px " }}>
-            <Text style={{ fontSize: "14px", fontWeight: "bold" }}>
-              Next.js
-            </Text>
-            <Tag color="orange">Intermediate</Tag>
-            <Progress
-              percent={90}
-              showInfo={false}
-              strokeColor="#f39911ff"
-              size={"default"}
-            />
-          </Card>
-        </Col>
+        {frameworks.map((fw) => (
+          <Col key={fw.id} xs={24} sm={16} md={16} lg={8}>
+            <Card variant="borderless" style={{ marginTop: "5px " }}>
+              <Text style={{ fontSize: "14px", fontWeight: "bold" }}>
+                {fw.name}
+              </Text>
+              <Tag color="green">{fw.level}</Tag>
+              <Progress
+                percent={Math.min((fw.yearsOfExperience / 10) * 100, 100)}
+                showInfo={false}
+                strokeColor={
+                  fw.yearsOfExperience >= 5
+                    ? "#0cfc34ff"
+                    : fw.yearsOfExperience >= 3
+                    ? "#3f4bf3ff"
+                    : "#fcec0aff"
+                }
+                size="default"
+              />
+            </Card>
+          </Col>
+        ))}
       </Row>
     </Card>
   );
