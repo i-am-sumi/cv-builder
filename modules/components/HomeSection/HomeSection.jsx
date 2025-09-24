@@ -1,13 +1,14 @@
 "use client";
-import AppHeader from "@/modules/components/AppHeader/AppHeader";
 import "aos/dist/aos.css";
 
 import {
+  faArrowRight,
   faBriefcase,
   faPalette,
-  faShieldCat,
+  faRobot,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { Button, Col, Layout, Row, Typography } from "antd";
 import Aos from "aos";
 import { useEffect } from "react";
@@ -24,12 +25,7 @@ const { Title, Paragraph } = Typography;
 
 const cardItem = [
   {
-    icon: (
-      <FontAwesomeIcon
-        icon={faShieldCat}
-        style={{ fontSize: "35px", color: "orange" }}
-      />
-    ),
+    icon: <FontAwesomeIcon icon={faRobot} style={{ fontSize: "35px" }} />,
     title: "AI-Powered Generation",
     span: "Smart algorithms analyze job requirements content with drag-and-drop editing.",
   },
@@ -64,7 +60,6 @@ export default function HomeSection() {
   }, []);
   return (
     <Layout>
-      <AppHeader />
       <Section>
         <Content style={{ position: "relative", borderRadius: "8px" }}>
           <HomeTitle
@@ -83,7 +78,14 @@ export default function HomeSection() {
 
           <Buttons gap="small" justify="center" style={{ marginTop: "24px" }}>
             <Button size="large" className="button1">
-              Start Building
+              Start Building{" "}
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                style={{
+                  alignItems: "center",
+                  fontSize: "15px",
+                }}
+              />
             </Button>
             <Button
               size="large"
