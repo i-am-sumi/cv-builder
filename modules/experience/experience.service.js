@@ -3,7 +3,6 @@ import { api } from "@/utils/restClient";
 export const getExperiences = async () => {
   const res = await api.rest.experiences.get({
     query: { page: 1, limit: 20 },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data.experiences;
 };
@@ -28,7 +27,6 @@ export const createExperience = async (experience) => {
         ? experience.technologies
         : experience.technologies.split(",").map((t) => t.trim()),
     },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data;
 };
@@ -47,7 +45,6 @@ export const updateExperience = async (experience) => {
         ? experience.technologies
         : experience.technologies.split(",").map((t) => t.trim()),
     },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
   console.log("Update response:", res);
@@ -55,9 +52,7 @@ export const updateExperience = async (experience) => {
 };
 
 export const deleteExperience = async (id) => {
-  const res = await api.rest.experiences(id).delete({
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+  const res = await api.rest.experiences(id).delete({});
   console.log("delete", res);
   return res.data;
 };

@@ -3,7 +3,6 @@ import { api } from "@/utils/restClient";
 export const getSkills = async () => {
   const res = await api.rest.skills.get({
     query: { page: 1, limit: 20 },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data.skills;
 };
@@ -22,7 +21,6 @@ export const createSkill = async (skill) => {
       category: skill.category,
       yearsOfExperience: Number(skill.yearsOfExperience),
     },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
   return res.data;
@@ -36,14 +34,11 @@ export const updateSkill = async (skill) => {
       category: `${skill.category}`,
       yearsOfExperience: Number(skill.yearsOfExperience),
     },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data;
 };
 
 export const deleteSkill = async (id) => {
-  const res = await api.rest.skills(id).delete({
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+  const res = await api.rest.skills(id).delete({});
   return res.data;
 };

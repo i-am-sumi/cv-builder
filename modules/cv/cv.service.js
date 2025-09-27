@@ -11,7 +11,7 @@ export const getCV = async ({ queryKey, client }) => {
 
   const res = await api.rest
     .cvs(id)
-    .headers({ Authorization: getToekn(client) })
+
     .get();
   console.log("kj", res);
   return res.data.data;
@@ -51,31 +51,3 @@ export const deleteCV = async () => {
   console.log("deleteCV", res);
   return res;
 };
-
-/*
-
-export const updateCV = async (cv) => {
-  try {
-    const data = await fetcher({
-      method: HTTP_METHODS.PATCH,
-      path: `cv/updateCv`,
-      body: cv,
-    });
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const deleteCV = async (id) => {
-  try {
-    const data = await fetcher({
-      method: HTTP_METHODS.DELETE,
-      path: `cv/deleteCV`,
-      body: id,
-    });
-    return data;
-  } catch (error) {
-    console.log({ error });
-  }
-};*/

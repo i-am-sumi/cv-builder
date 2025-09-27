@@ -12,6 +12,8 @@ export const useSkills = () => {
     queryKey: ["skills"],
     queryFn: getSkills,
     enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 

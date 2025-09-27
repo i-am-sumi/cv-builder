@@ -3,7 +3,6 @@ import { api } from "@/utils/restClient";
 export const getEducations = async () => {
   const res = await api.rest.education.get({
     query: { page: 1, limit: 20 },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data.education;
 };
@@ -28,7 +27,6 @@ export const createEducation = async (education) => {
       achievements: education.achievements?.map((a) => String(a)) || [],
       gpa: Number(education.gpa),
     },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   console.log("addeducation", res);
   return res.data;
@@ -47,15 +45,12 @@ export const updateEducation = async (education) => {
       achievements: education.achievements?.map((a) => String(a)) || [],
       gpa: Number(education.gpa),
     },
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   console.log("updateEducation", res);
   return res.data;
 };
 export const deleteEducation = async (id) => {
-  const res = await api.rest.education(id).delete({
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+  const res = await api.rest.education(id).delete({});
   console.log("deleteEducation", res);
   return res;
 };
