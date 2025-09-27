@@ -5,7 +5,7 @@ export const getExperiences = async () => {
     query: { page: 1, limit: 20 },
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
-  return res.data;
+  return res.data.experiences;
 };
 
 export const getExperience = async ({ queryKey }) => {

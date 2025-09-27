@@ -1,6 +1,5 @@
 "use client";
 
-import AppHeader from "@/modules/components/AppHeader/AppHeader";
 import LoadingCard from "@/modules/components/LoadingCard";
 import ExperienceModal from "@/modules/components/modal/ExperiencesModal";
 import {
@@ -107,8 +106,6 @@ export default function Experience() {
 
   return (
     <Layout>
-      <AppHeader />
-
       <EducationSection>
         <div style={{ position: "relative", marginBottom: "5px" }}>
           <div style={{ marginTop: "10px" }}>
@@ -140,7 +137,7 @@ export default function Experience() {
                 {isLoading ? (
                   <LoadingCard />
                 ) : (
-                  data?.experiences?.map((exp) => (
+                  data?.map((exp) => (
                     <Card key={exp.id} className="education-card">
                       <div className="education-card-item">
                         <Title level={3}>{exp.jobTitle}</Title>

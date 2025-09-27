@@ -30,7 +30,7 @@ export const Buttons = styled(Flex)`
     height: 40px;
     line-height: 40px;
     border: none;
-    background-color: orange;
+    background-color: white;
     color: #3232eb;
     font-size: 14px;
     font-weight: bold;
@@ -40,7 +40,7 @@ export const Buttons = styled(Flex)`
     min-width: 140px;
     height: 40px;
     line-height: 40px;
-    border: 1px solid orange;
+    border: 1px solid blue;
     backdrop-filter: blur(1px);
     webkitbackdrop-filter: blur(1px);
   }

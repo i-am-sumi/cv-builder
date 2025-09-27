@@ -1,6 +1,5 @@
 "use client";
 
-import AppHeader from "@/modules/components/AppHeader/AppHeader";
 import LoadingCard from "@/modules/components/LoadingCard";
 import EducationModal from "@/modules/components/modal/EducationModal";
 import { ProfessionalCertified } from "@/modules/components/ProffisionalCertificate";
@@ -11,7 +10,12 @@ import {
   useUpdateEducation,
 } from "@/modules/education/education.query";
 import { BellOutlined, MobileOutlined } from "@ant-design/icons";
-import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGraduationCap,
+  faPen,
+  faPlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import Layout from "antd/es/layout/layout";
@@ -88,8 +92,6 @@ export default function Education() {
 
   return (
     <Layout>
-      <AppHeader />
-
       <div
         style={{ padding: "0 48px", position: "relative", marginBottom: "5px" }}
       >
@@ -132,7 +134,7 @@ export default function Education() {
                 {isLoading ? (
                   <LoadingCard />
                 ) : (
-                  data?.education?.map((edu) => (
+                  data?.map((edu) => (
                     <Card
                       key={edu.id}
                       title={
@@ -141,7 +143,16 @@ export default function Education() {
                             {edu.degree}
                           </Title>
                           <div className="edu-div">
-                            <Tag color="blue">{edu.degreeType}</Tag>
+                            <Tag
+                              color="blue"
+                              style={{ padding: "5px", fontSize: "13px" }}
+                            >
+                              <FontAwesomeIcon
+                                icon={faGraduationCap}
+                                style={{ color: "gray" }}
+                              />
+                              {edu.degreeType}
+                            </Tag>
                           </div>
                         </EduHeader>
                       }

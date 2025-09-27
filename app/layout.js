@@ -1,3 +1,4 @@
+import { AppHeader } from "@/modules/components/AppHeader";
 import FooterSection from "@/modules/components/Footer/FooterSection";
 import QueryProvider from "@/modules/components/Provider/QueryProvider";
 import theme from "@/theme/themeConfig";
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <AppHeader />
         <QueryProvider>
           <ConfigProvider theme={theme}>{children}</ConfigProvider>
         </QueryProvider>

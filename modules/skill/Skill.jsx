@@ -1,5 +1,4 @@
 "use client";
-import AppHeader from "@/modules/components/AppHeader/AppHeader";
 import FrameworkLibraries from "@/modules/components/FrameWork&Lebraries";
 import LoadingCard from "@/modules/components/LoadingCard";
 import {
@@ -29,6 +28,7 @@ import {
   Typography,
   message,
 } from "antd";
+import Image from "next/image";
 import { useState } from "react";
 import SkillModal from "../components/modal/SkillModal";
 import { SkillComponents, ToolsCard } from "./Skill.stc";
@@ -89,15 +89,14 @@ export default function Skill() {
     }
   };
 
-  const programmingSkills = data?.skills?.filter(
+  const programmingSkills = data?.filter(
     (s) => s.category === "language" || s.category === "technical"
   );
-  const tools = data?.skills?.filter((s) => s.category === "tool");
-  const softSkills = data?.skills?.filter((s) => s.category === "soft_skill");
+  const tools = data?.filter((s) => s.category === "tool");
+  const softSkills = data?.filter((s) => s.category === "soft_skill");
 
   return (
     <Layout>
-      <AppHeader />
       <SkillComponents>
         <div style={{ position: "relative", marginBottom: "10px" }}>
           {" "}
@@ -111,7 +110,7 @@ export default function Skill() {
           </Text>{" "}
           <Flex gap="small" wrap className="flex-buttons">
             {" "}
-            <Button className="w-fit">Skills Assessment</Button>{" "}
+            <Button>Skills Assessment</Button>{" "}
             <Button type="primary" className="w-fit" onClick={handleAdd}>
               {" "}
               <PlusOutlined /> Add skill{" "}
@@ -182,7 +181,10 @@ export default function Skill() {
                           }
                         />
                       </div>
-                      <Flex gap="small">
+                      <Flex
+                        gap="small"
+                        style={{ marginTop: "15px", marginLeft: "5px" }}
+                      >
                         <Button
                           type="primary"
                           size="small"
@@ -204,7 +206,7 @@ export default function Skill() {
                 )}
               </Card>
 
-              <FrameworkLibraries skills={data?.skills || []} />
+              <FrameworkLibraries skills={data || []} loading={isLoading} />
 
               <Card
                 title={
@@ -221,27 +223,31 @@ export default function Skill() {
                   </Button>
                 }
               >
-                <Row gutter={16}>
-                  {tools?.map((ts) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={ts.id}>
-                      <ToolsCard>
-                        <Paragraph style={{ textAlign: "center" }}>
-                          <FontAwesomeIcon
-                            icon={faCloud}
-                            style={{ fontSize: "27px", color: "cyan" }}
-                          />
-                        </Paragraph>
-                        <Paragraph
-                          className="paragraph"
-                          style={{ textAlign: "center" }}
-                        >
-                          {ts.name}
-                        </Paragraph>
-                        <Tag color="blue">{ts.level}</Tag>
-                      </ToolsCard>
-                    </Col>
-                  ))}
-                </Row>
+                {isLoading ? (
+                  <LoadingCard />
+                ) : (
+                  <Row gutter={16}>
+                    {tools?.map((ts) => (
+                      <Col xs={24} sm={12} md={8} lg={6} key={ts.id}>
+                        <ToolsCard>
+                          <Paragraph style={{ textAlign: "center" }}>
+                            <FontAwesomeIcon
+                              icon={faCloud}
+                              style={{ fontSize: "27px", color: "cyan" }}
+                            />
+                          </Paragraph>
+                          <Paragraph
+                            className="paragraph"
+                            style={{ textAlign: "center" }}
+                          >
+                            {ts.name}
+                          </Paragraph>
+                          <Tag color="blue">{ts.level}</Tag>
+                        </ToolsCard>
+                      </Col>
+                    ))}
+                  </Row>
+                )}
               </Card>
 
               <Card
@@ -259,13 +265,15 @@ export default function Skill() {
                   </Button>
                 }
               >
-                {softSkills?.length ? (
+                {isLoading ? (
+                  <LoadingCard />
+                ) : softSkills?.length ? (
                   softSkills.map((s) => (
                     <Tag
                       key={s.id}
                       style={{
-                        padding: "10px",
-                        fontSize: "13px",
+                        padding: "6px 15px",
+                        fontSize: "16px",
                         margin: "5px",
                       }}
                       color="cyan"
@@ -278,10 +286,13 @@ export default function Skill() {
                 )}
               </Card>
             </Col>
-
-            <Col xs={24} md={8}>
-              <Card title={<Title level={4}>Skills Overview</Title>} bordered>
-                <Flex vertical gap="small">
+            <Col xs={24} sm={4} md={8} lg={8}>
+              <Card
+                title={<Title level={4}>Skills Overview</Title>}
+                variant="borderless"
+                style={{ width: "100%" }}
+              >
+                <Flex gap="small" vertical>
                   <Title
                     style={{
                       fontSize: "30px",
@@ -289,17 +300,124 @@ export default function Skill() {
                       color: "blue",
                     }}
                   >
-                    89%
+                    {" "}
+                    89%{" "}
                   </Title>
                   <Text
                     style={{
                       textAlign: "center",
-                      fontSize: "10px",
+                      fontSize: "22px",
                       color: "grey",
                     }}
                   >
-                    Market Relevance Score
+                    {" "}
+                    Market Relevance Score{" "}
                   </Text>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Text>Technical Skills</Text>{" "}
+                    <Text style={{ color: "grey" }}>18 skills</Text>
+                  </div>{" "}
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Text>Expert Level</Text>{" "}
+                    <Text style={{ color: "green" }}>5 skills</Text>
+                  </div>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Text>Learning</Text>{" "}
+                    <Paragraph style={{ color: "orange" }}>3 skills</Paragraph>
+                  </div>
+                </Flex>{" "}
+              </Card>
+              <Card
+                title={<Title level={4}>Trending Skills</Title>}
+                variant="borderless"
+                style={{ marginTop: "20px" }}
+              >
+                <Card>
+                  {" "}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    <Text style={{ font: "icon", fontSize: "14px" }}>
+                      {" "}
+                      GraphQL{" "}
+                    </Text>
+                    <Paragraph style={{ color: "green" }}>
+                      {" "}
+                      ↗ 35% demand{" "}
+                    </Paragraph>{" "}
+                  </div>
+                  <Text style={{ color: "grey" }}>
+                    {" "}
+                    API technology trending in React jobs{" "}
+                  </Text>
+                  <br />
+                  <Button type="primary" size="small">
+                    {" "}
+                    Get Certified{" "}
+                  </Button>{" "}
+                </Card>
+                <Card>
+                  {" "}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    <Text style={{ font: "icon", fontSize: "14px" }}>
+                      {" "}
+                      Kubernetes{" "}
+                    </Text>{" "}
+                    <Paragraph style={{ color: "green" }}>
+                      {" "}
+                      ↗ 28% demand{" "}
+                    </Paragraph>{" "}
+                  </div>{" "}
+                  <Text style={{ color: "grey" }}>
+                    {" "}
+                    Container orchestration in high demand{" "}
+                  </Text>{" "}
+                  <br />
+                  <Button type="primary" size="small">
+                    {" "}
+                    Get Certified{" "}
+                  </Button>{" "}
+                </Card>{" "}
+              </Card>{" "}
+              <Card
+                title={<Title level={4}>Skill Actions</Title>}
+                variant="borderless"
+                style={{ width: "100%", marginTop: "20px" }}
+              >
+                {" "}
+                <Flex
+                  vertical
+                  gap="small"
+                  style={{ width: "100%", fontSize: "12px" }}
+                >
+                  {" "}
+                  <Button type="primary" block>
+                    {" "}
+                    <Image
+                      src="/assect/AiIcon.png"
+                      alt="AI Icon"
+                      width={20}
+                      height={20}
+                    />{" "}
+                    Generate Education Report{" "}
+                  </Button>
+                  <Button block>Set Renewal Reminders</Button>
                 </Flex>
               </Card>
             </Col>

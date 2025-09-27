@@ -1,5 +1,4 @@
 "use client";
-import AppHeader from "@/modules/components/AppHeader/AppHeader";
 import Icon from "@ant-design/icons";
 import {
   faAlarmClock,
@@ -25,7 +24,6 @@ import {
 import Search from "antd/es/input/Search";
 import Image from "next/image";
 import LoadingCard from "../components/LoadingCard";
-import HeartSvg from "../components/SvgForder/Heartsvg";
 import { JobForm, Wapper } from "./Jobs.stc";
 import { useJobs } from "./jobs.query";
 
@@ -39,7 +37,6 @@ export default function Jobs() {
 
   return (
     <Layout>
-      <AppHeader />
       <Wapper>
         <Title level={2} style={{ fontFamily: "monospace" }}>
           Browse Jobs

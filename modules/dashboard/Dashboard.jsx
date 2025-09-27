@@ -1,5 +1,4 @@
 "use client";
-import AppHeader from "@/modules/components/AppHeader/AppHeader";
 import { LinkedinOutlined } from "@ant-design/icons";
 import {
   faBriefcase,
@@ -32,7 +31,6 @@ export default function Dashboard() {
   const { data, isLoading } = useJobs();
   return (
     <Layout>
-      <AppHeader />
       <div style={{ padding: "15px 48px" }}>
         <Breadcrumb
           style={{ margin: "16px 0", fontSize: "14px" }}

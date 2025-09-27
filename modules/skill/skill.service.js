@@ -5,7 +5,7 @@ export const getSkills = async () => {
     query: { page: 1, limit: 20 },
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
-  return res.data;
+  return res.data.skills;
 };
 
 export const getSkill = async ({ queryKey }) => {
