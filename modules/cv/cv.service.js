@@ -9,10 +9,7 @@ export const getCV = async ({ queryKey, client }) => {
   console.log("id", id);
   const token = getToken();
 
-  const res = await api.rest
-    .cvs(id)
-
-    .get();
+  const res = await api.rest.cvs(id).get();
   console.log("kj", res);
   return res.data.data;
 };
