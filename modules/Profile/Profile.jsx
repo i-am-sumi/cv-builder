@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useEducations } from "../education/education.query";
 import { useExperiences } from "../experience/experience.query";
 import { useSkills } from "../skill/skill.query";
+
 import { ProfileSection } from "./Profile.stc";
 
 const { Title, Text, Paragraph } = Typography;
