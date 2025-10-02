@@ -37,4 +37,13 @@ export const CustomMenu = styled(Menu)`
   border-radius: 6px;
   margin: 6px 0;
   padding: 10px !important;
+
+`;
+
+export const ButtonDiv = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 50px;
+  display: flex;
+  gap: 5px;
 `;
