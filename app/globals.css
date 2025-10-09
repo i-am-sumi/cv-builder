@@ -19,17 +19,14 @@
 }
 
 .custom-nav .ant-menu-item-selected {
-  border-bottom: 2px solid #1677ff; /* underline রঙ */
-  background-color: transparent !important; /* ব্যাকগ্রাউন্ড বাদ */
-}
-
-/* Hover এও underline effect */
-.custom-nav .ant-menu-item:hover {
   border-bottom: 2px solid #1677ff;
   background-color: transparent !important;
 }
 
-/* Transition smooth করার জন্য */
+.custom-nav .ant-menu-item:hover {
+  border-bottom: 2px solid #1677ff;
+  background-color: transparent !important;
+}
 .custom-nav .ant-menu-item {
   transition: border-bottom 0.3s ease;
 }
