@@ -42,7 +42,7 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function Experience() {
   const { data, isLoading, error } = useExperiences();
-  console.log("exp", data);
+
   const { mutate: addExperience, isLoading: creating } = useAddExperience();
   const { mutate: updateExperience, isLoading: updating } =
     useUpdateExperience();
