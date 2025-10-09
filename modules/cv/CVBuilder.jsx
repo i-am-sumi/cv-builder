@@ -1,16 +1,17 @@
 "use client";
 
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Button, Card, Col, Flex, Layout, Row, Tag, Typography } from "antd";
 import Search from "antd/es/input/Search";
-import { Header } from "antd/es/layout/layout";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useEducations } from "../education/education.query";
 import { useExperiences } from "../experience/experience.query";
 import { AchievementLists } from "../experience/Experience.stc";
 import { useSkills } from "../skill/skill.query";
+import { EducationCard, ExperienceCard, Navber } from "./CVBuilder.stc";
 import ResumeCard from "./ResumeCard";
 
 const { Title, Paragraph, Text } = Typography;
@@ -24,6 +25,8 @@ const reorder = (list, startIndex, endIndex) => {
 
 export default function CVBuilder() {
   const [resumeExperiences, setResumeExperiences] = useState([]);
+  const [resumeEducation, setResumeEducation] = useState([]);
+  const [resumeSkills, setResumeSkills] = useState([]);
   const { data: experiencesData } = useExperiences();
   const { data: educationData } = useEducations();
   const { data: skillData } = useSkills();
@@ -36,61 +39,70 @@ export default function CVBuilder() {
   const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
-    if (experiencesData) {
-      setExperiences(experiencesData);
-    }
-  }, [experiencesData]);
-
-  useEffect(() => {
-    if (educationData) {
-      setEducation(educationData);
-    }
-  }, [educationData]);
-
-  useEffect(() => {
-    if (skillData) {
-      setSkills(skillData);
-    }
-  }, [skillData]);
+    if (experiencesData) setExperiences(experiencesData);
+    if (educationData) setEducation(educationData);
+    if (skillData) setSkills(skillData);
+  }, [experiencesData, educationData, skillData]);
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
     const { source, destination } = result;
 
-    // যদি একই লিস্টে ড্র্যাগ হয় (শুধু order change হবে)
     if (source.droppableId === destination.droppableId) {
       if (source.droppableId === "experiences") {
-        const reordered = reorder(experiences, source.index, destination.index);
-        setExperiences(reordered);
+        setExperiences(reorder(experiences, source.index, destination.index));
       }
-
       if (source.droppableId === "education") {
-        const reordered = reorder(education, source.index, destination.index);
-        setEducation(reordered);
+        setEducation(reorder(education, source.index, destination.index));
       }
-
       if (source.droppableId === "skills") {
-        const reordered = reorder(skills, source.index, destination.index);
-        setSkills(reordered);
+        setSkills(reorder(skills, source.index, destination.index));
       }
-
       if (source.droppableId === "resumeExperiences") {
-        const reordered = reorder(
-          resumeExperiences,
-          source.index,
-          destination.index
+        setResumeExperiences(
+          reorder(resumeExperiences, source.index, destination.index)
         );
-        setResumeExperiences(reordered);
+      }
+      if (source.droppableId === "resumeEducation") {
+        setResumeEducation(
+          reorder(resumeEducation, source.index, destination.index)
+        );
+      }
+      if (source.droppableId === "resumeSkills") {
+        setResumeSkills(reorder(resumeSkills, source.index, destination.index));
       }
     } else {
-      // Move from Library → Resume
       if (
-        source.droppableId === "experiences" &&
-        destination.droppableId === "resumeExperiences"
+        ["experiences", "education", "skills"].includes(source.droppableId) &&
+        ["resumeExperiences", "resumeEducation", "resumeSkills"].includes(
+          destination.droppableId
+        )
       ) {
-        const movedItem = experiences[source.index];
-        setResumeExperiences([...resumeExperiences, movedItem]);
+        let copiedItem;
+        if (source.droppableId === "experiences") {
+          copiedItem = experiences[source.index];
+          setResumeExperiences([
+            ...resumeExperiences,
+            { ...copiedItem, id: Date.now(), type: "experience" },
+          ]);
+        }
+
+        if (source.droppableId === "education") {
+          copiedItem = education[source.index];
+          setResumeEducation([
+            ...resumeEducation,
+            { ...copiedItem, id: Date.now(), type: "education" },
+          ]);
+        }
+
+        if (source.droppableId === "skills") {
+          copiedItem = skills[source.index];
+          setResumeSkills([
+            ...resumeSkills,
+            { ...copiedItem, id: Date.now(), type: "skills" },
+          ]);
+        }
       }
     }
   };
@@ -100,7 +112,7 @@ export default function CVBuilder() {
 
   return (
     <Layout>
-      <Header style={{ padding: 0, background: "#eff2f3" }}>
+      <Navber>
         <div
           style={{
             display: "flex",
@@ -112,50 +124,73 @@ export default function CVBuilder() {
             Resume Builder
           </Title>
           <Flex gap="small" wrap>
-            <Button color="gold" variant="solid">
+            <Button color="gold" variant="solid" style={{ fontWeight: "bold" }}>
               AI Help
             </Button>
-            <Button color="default" variant="outlined">
-              <FontAwesomeIcon icon={faEye} /> Preview
+            <Button
+              color="default"
+              variant="outlined"
+              style={{ fontWeight: "bold" }}
+              onClick={() => {
+                // LocalStorage এ resume data সংরক্ষণ
+                const resumeData = {
+                  experiences: resumeExperiences,
+                  education: resumeEducation,
+                  skills: resumeSkills,
+                };
+                localStorage.setItem("resumeData", JSON.stringify(resumeData));
+              }}
+            >
+              <Link href="/preview">
+                <FontAwesomeIcon icon={faEye} /> Preview
+              </Link>
             </Button>
-            <Button color="default" variant="outlined">
+
+            <Button
+              color="default"
+              variant="outlined"
+              style={{ fontWeight: "bold" }}
+            >
               Save
             </Button>
-            <Button type="primary">Export</Button>
+            <Button type="primary" style={{ fontWeight: "bold" }}>
+              Export
+            </Button>
           </Flex>
         </div>
-      </Header>
+      </Navber>
 
       <div style={{ margin: "10px 40px", display: "flex", gap: "15px" }}>
-        <Row gutter={[16, 16]} style={{ width: "100%" }}>
-          <Col xs={24} sm={16} md={8} lg={8}>
-            <Card style={{ background: "#eff2f3" }}>
-              <Title level={3}>Content Library</Title>
-              <Text>Drag items to your resume</Text>
-              <Search placeholder="Search" allowClear size="large" />
-              <Flex gap="small" wrap style={{ marginTop: "5px" }}>
-                {buttons.map((filter) => (
-                  <Button
-                    key={filter}
-                    shape="round"
-                    onClick={() => setActiveFilter(filter)}
-                    style={{
-                      background:
-                        activeFilter === filter ? "#1677ff" : "#eff2f3",
-                      color: activeFilter === filter ? "#fff" : "#000",
-                    }}
-                  >
-                    {filter}
-                  </Button>
-                ))}
-              </Flex>
-
-              {isVisible("Work") && (
-                <Card
-                  title="Work Experiences"
-                  style={{ marginTop: "15px", marginBottom: "5px" }}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Row gutter={[16, 16]} style={{ width: "100%" }}>
+            <Col xs={24} sm={16} md={8} lg={8}>
+              <Card style={{ background: "#edebf8" }}>
+                <Title level={3}>Content Library</Title>
+                <Text>Drag items to your resume</Text>
+                <Search placeholder="Search" allowClear size="large" />
+                <Flex
+                  gap="small"
+                  wrap
+                  style={{ marginTop: "7px", marginBottom: "7px" }}
                 >
-                  <DragDropContext onDragEnd={handleDragEnd}>
+                  {buttons.map((filter) => (
+                    <Button
+                      key={filter}
+                      shape="round"
+                      onClick={() => setActiveFilter(filter)}
+                      style={{
+                        background:
+                          activeFilter === filter ? "#1677ff" : "#eff2f3",
+                        color: activeFilter === filter ? "#fff" : "#000",
+                      }}
+                    >
+                      {filter}
+                    </Button>
+                  ))}
+                </Flex>
+
+                {isVisible("Work") && (
+                  <Card title={<Title level={3}>Work Experinece</Title>}>
                     <Droppable droppableId="experiences">
                       {(provided) => (
                         <div
@@ -168,18 +203,54 @@ export default function CVBuilder() {
                               draggableId={exp.id.toString()}
                               index={index}
                             >
-                              {(provided) => (
-                                <Card
+                              {(provided, snapshot) => (
+                                <ExperienceCard
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   style={{
                                     marginTop: "5px",
-                                    border: "1px solid green",
+                                    border: snapshot.isDragging
+                                      ? "1px dashed #1677ff"
+                                      : "1px solid green",
+                                    borderRadius: "8px",
                                     ...provided.draggableProps.style,
                                   }}
                                 >
                                   <Title level={5}>{exp.jobTitle}</Title>
+                                  <div className="EditDeleteBtns">
+                                    <Button
+                                      icon={
+                                        <FontAwesomeIcon
+                                          icon={faPen}
+                                          style={{
+                                            alignItems: "center",
+                                            fontSize: "10px",
+                                            color: "white",
+                                          }}
+                                        />
+                                      }
+                                      type="primary"
+                                      size="small"
+                                      onClick={() => handleEdit(edu)}
+                                    ></Button>
+                                    <Button
+                                      icon={
+                                        <FontAwesomeIcon
+                                          icon={faTrash}
+                                          style={{
+                                            alignItems: "center",
+                                            fontSize: "10px",
+                                            color: "white",
+                                          }}
+                                        />
+                                      }
+                                      danger
+                                      type="primary"
+                                      size="small"
+                                      onClick={() => handleDelete(edu.id)}
+                                    ></Button>
+                                  </div>
                                   <Text>{exp.company}</Text>
                                   <Paragraph
                                     style={{ fontSize: "12px", color: "grey" }}
@@ -200,7 +271,7 @@ export default function CVBuilder() {
                                       </Tag>
                                     ))}
                                   </div>
-                                </Card>
+                                </ExperienceCard>
                               )}
                             </Draggable>
                           ))}
@@ -208,13 +279,14 @@ export default function CVBuilder() {
                         </div>
                       )}
                     </Droppable>
-                  </DragDropContext>
-                </Card>
-              )}
+                  </Card>
+                )}
 
-              {isVisible("Education") && (
-                <Card title="Education" style={{ marginTop: "5px" }}>
-                  <DragDropContext onDragEnd={handleDragEnd}>
+                {isVisible("Education") && (
+                  <Card
+                    title={<Title level={3}>Education</Title>}
+                    style={{ marginTop: "5px" }}
+                  >
                     <Droppable droppableId="education">
                       {(provided) => (
                         <div
@@ -227,17 +299,54 @@ export default function CVBuilder() {
                               draggableId={edu.id.toString()}
                               index={index}
                             >
-                              {(provided) => (
-                                <Card
+                              {(provided, snapshot) => (
+                                <EducationCard
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   style={{
                                     marginTop: "5px",
+                                    border: snapshot.isDragging
+                                      ? "1px dashed #1677ff"
+                                      : "1px solid green",
+                                    borderRadius: "8px",
                                     ...provided.draggableProps.style,
                                   }}
                                 >
                                   <Title level={5}>{edu.degree}</Title>
+                                  <div className="EditDeleteBtns">
+                                    <Button
+                                      icon={
+                                        <FontAwesomeIcon
+                                          icon={faPen}
+                                          style={{
+                                            alignItems: "center",
+                                            fontSize: "10px",
+                                            color: "white",
+                                          }}
+                                        />
+                                      }
+                                      type="primary"
+                                      size="small"
+                                      onClick={() => handleEdit(edu)}
+                                    ></Button>
+                                    <Button
+                                      icon={
+                                        <FontAwesomeIcon
+                                          icon={faTrash}
+                                          style={{
+                                            alignItems: "center",
+                                            fontSize: "10px",
+                                            color: "white",
+                                          }}
+                                        />
+                                      }
+                                      danger
+                                      type="primary"
+                                      size="small"
+                                      onClick={() => handleDelete(edu.id)}
+                                    ></Button>
+                                  </div>
                                   <Text>{edu.institution}</Text>
                                   <Paragraph
                                     style={{ fontSize: "12px", color: "grey" }}
@@ -250,7 +359,7 @@ export default function CVBuilder() {
                                       <li key={i}>{a}</li>
                                     ))}
                                   </AchievementLists>
-                                </Card>
+                                </EducationCard>
                               )}
                             </Draggable>
                           ))}
@@ -258,13 +367,14 @@ export default function CVBuilder() {
                         </div>
                       )}
                     </Droppable>
-                  </DragDropContext>
-                </Card>
-              )}
+                  </Card>
+                )}
 
-              {isVisible("Skills") && (
-                <Card title="Skills" style={{ marginTop: "5px" }}>
-                  <DragDropContext onDragEnd={handleDragEnd}>
+                {isVisible("Skills") && (
+                  <Card
+                    title={<Title level={3}>Skills</Title>}
+                    style={{ marginTop: "5px" }}
+                  >
                     <Droppable droppableId="skills">
                       {(provided) => {
                         const uniqueCategories = [
@@ -282,13 +392,17 @@ export default function CVBuilder() {
                                 draggableId={category}
                                 index={index}
                               >
-                                {(provided) => (
+                                {(provided, snapshot) => (
                                   <Card
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     style={{
                                       marginTop: "5px",
+                                      border: snapshot.isDragging
+                                        ? "1px dashed #1677ff"
+                                        : "1px solid green",
+                                      borderRadius: "8px",
                                       ...provided.draggableProps.style,
                                     }}
                                   >
@@ -311,19 +425,20 @@ export default function CVBuilder() {
                         );
                       }}
                     </Droppable>
-                  </DragDropContext>
-                </Card>
-              )}
-            </Card>
-          </Col>
+                  </Card>
+                )}
+              </Card>
+            </Col>
 
-          <Col xs={24} sm={16} md={8} lg={16}>
-            <ResumeCard
-              resumeExperiences={resumeExperiences}
-              handleDragEnd={handleDragEnd}
-            />
-          </Col>
-        </Row>
+            <Col xs={24} sm={16} md={16} lg={16}>
+              <ResumeCard
+                resumeExperiences={resumeExperiences}
+                resumeEducation={resumeEducation}
+                resumeSkills={resumeSkills}
+              />
+            </Col>
+          </Row>
+        </DragDropContext>
       </div>
     </Layout>
   );
