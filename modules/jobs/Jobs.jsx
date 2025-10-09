@@ -33,7 +33,6 @@ const HeartIcon = (props) => <Icon component={HeartSvg} {...props} />;
 
 export default function Jobs() {
   const { data, isLoading } = useJobs();
-  console.log("jobs", data);
 
   return (
     <Layout>
