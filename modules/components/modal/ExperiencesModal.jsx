@@ -37,6 +37,7 @@ export default function ExperienceModal({
       okText={initialData ? "Update" : "Create"}
       confirmLoading={loading}
       style={{ textAlign: "center" }}
+      afterClose={() => form.resetFields()}
     >
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item name="jobTitle" label="Job Title">
