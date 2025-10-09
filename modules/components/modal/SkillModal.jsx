@@ -26,7 +26,7 @@ export default function SkillModal({
       onOk={() => form.submit()}
       okText={initialData ? "Update" : "Create"}
       confirmLoading={loading}
-      afterClose={() => form.resetFields()} // modal বন্ধ হওয়ার পর clear হবে
+      afterClose={() => form.resetFields()}
     >
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item
