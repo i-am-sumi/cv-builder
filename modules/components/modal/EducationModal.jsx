@@ -23,8 +23,6 @@ export default function EducationModal({
           ? initialData.technologies.join(", ")
           : initialData.technologies || "",
       });
-    } else {
-      form.resetFields();
     }
   }, [initialData, form]);
 
@@ -37,26 +35,33 @@ export default function EducationModal({
       onOk={() => form.submit()}
       okText={initialData ? "Update" : "Create"}
       confirmLoading={loading}
+      afterClose={() => form.resetFields()} // ✅ modal বন্ধ হওয়ার পরে data clear
     >
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item name="degree" label="Degree">
           <Input />
         </Form.Item>
+
         <Form.Item name="institution" label="Institution">
           <Input />
         </Form.Item>
+
         <Form.Item name="location" label="Location">
           <Input />
         </Form.Item>
+
         <Form.Item name="degreeType" label="Degree Type">
           <Input />
         </Form.Item>
+
         <Form.Item name="startDate" label="Start Date">
           <Input type="date" />
         </Form.Item>
+
         <Form.Item name="endDate" label="End Date">
           <Input type="date" />
         </Form.Item>
+
         <Form.Item
           name="gpa"
           label="GPA"
@@ -72,12 +77,15 @@ export default function EducationModal({
         >
           <InputNumber step={0.01} min={0} max={4} style={{ width: "100%" }} />
         </Form.Item>
+
         <Form.Item name="description" label="Description">
           <Input.TextArea rows={3} />
         </Form.Item>
+
         <Form.Item name="achievements" label="Achievements (comma separated)">
           <Input />
         </Form.Item>
+
         <Form.Item name="fieldOfStudy" label="Field of Study">
           <Input />
         </Form.Item>
