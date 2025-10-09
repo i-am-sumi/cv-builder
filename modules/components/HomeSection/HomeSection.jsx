@@ -76,7 +76,10 @@ export default function HomeSection() {
             </Span>
           </div>
 
-          <Buttons gap="small" justify="center" style={{ marginTop: "24px" }}>
+          <Buttons
+            gap="small"
+            style={{ marginTop: "24px", justifyContent: "center" }}
+          >
             <Button size="large" className="button1">
               Start Building{" "}
               <FontAwesomeIcon
@@ -87,12 +90,7 @@ export default function HomeSection() {
                 }}
               />
             </Button>
-            <Button
-              size="large"
-              ghost
-              style={{ color: "blue" }}
-              className="button2"
-            >
+            <Button size="large" ghost className="button2">
               Watch Demo
             </Button>
           </Buttons>
@@ -102,28 +100,12 @@ export default function HomeSection() {
           <Row gutter={[16, 16]}>
             {cardItem.map((item, index) => (
               <Col key={index} xs={24} sm={24} md={12} lg={8}>
-                <HomeSectionCard
-                  data-aos="fade-right"
-                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
-                >
-                  <div style={{ textAlign: "center", marginBottom: "12px" }}>
-                    {item.icon}
-                  </div>
-                  <Title
-                    level={3}
-                    style={{ textAlign: "center", color: "white" }}
-                  >
+                <HomeSectionCard data-aos="fade-right">
+                  <div className="Icon">{item.icon}</div>
+                  <Title level={3} className="title">
                     {item.title}
                   </Title>
-                  <Paragraph
-                    style={{
-                      textAlign: "center",
-                      fontSize: "18px",
-                      color: "white",
-                    }}
-                  >
-                    {item.span}
-                  </Paragraph>
+                  <Paragraph className="paragraph">{item.span}</Paragraph>
                 </HomeSectionCard>
               </Col>
             ))}
