@@ -8,7 +8,6 @@ export const getEducations = async () => {
 };
 export const getEducation = async ({ queryKey }) => {
   const [_key, id] = queryKey;
-  console.log("id", id);
   const res = await api.rest.education(id).get();
 
   return res.data.data;
@@ -46,11 +45,10 @@ export const updateEducation = async (education) => {
       gpa: Number(education.gpa),
     },
   });
-  console.log("updateEducation", res);
+
   return res.data;
 };
 export const deleteEducation = async (id) => {
   const res = await api.rest.education(id).delete({});
-  console.log("deleteEducation", res);
   return res;
 };
