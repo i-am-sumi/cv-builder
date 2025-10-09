@@ -1,23 +1,21 @@
-import { HTTP_METHODS } from "@/constants";
-import { fetcher } from "@/utils/fetcher";
+import { api } from "@/utils/restClient";
 
 export const registerUser = async (user) => {
-  console.log("Register payload:", user);
-  return await fetcher({
-    method: HTTP_METHODS.POST,
-    path: "auth/register",
+  const res = await api.rest.auth.register.post({
     body: user,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
+  return res.data;
 };
 
 export const loginUser = async (credentials) => {
-  return await fetcher({
-    method: HTTP_METHODS.POST,
-    path: "auth/login",
+  const res = await api.rest.auth.login.post({
     body: credentials,
     headers: {
       "Content-Type": "application/json",
     },
   });
+  return res.data;
 };
