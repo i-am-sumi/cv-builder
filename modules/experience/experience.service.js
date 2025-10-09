@@ -53,6 +53,6 @@ export const updateExperience = async (experience) => {
 
 export const deleteExperience = async (id) => {
   const res = await api.rest.experiences(id).delete({});
-  console.log("delete", res);
+
   return res.data;
 };
