@@ -27,7 +27,6 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function Education() {
   const { data, isLoading, error } = useEducations();
-  console.log("edu", data);
 
   const { mutate: addEducation, isLoading: creating } = useAddEducation();
   const { mutate: updateEducation, isLoading: updating } = useUpdateEducation();
