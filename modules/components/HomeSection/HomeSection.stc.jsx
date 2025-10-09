@@ -38,6 +38,7 @@ export const Buttons = styled(Flex)`
 
   & .button2 {
     min-width: 140px;
+    color: #3232eb;
     height: 40px;
     line-height: 40px;
     border: 1px solid blue;
@@ -70,4 +71,19 @@ export const HomeSectionCard = styled(Card)`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   margin-top: 40px;
+  background-color: rgba(255, 255, 255, 0.05);
+
+  & .Icon {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  & .title {
+    text-align: center;
+    color: white;
+  }
+  & .paragraph {
+    text-align: center;
+    font-size: 18px;
+    color: white;
+  }
 `;
