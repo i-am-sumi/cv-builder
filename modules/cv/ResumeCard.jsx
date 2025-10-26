@@ -1,61 +1,56 @@
+"use client";
 import {
   faArrowsSpin,
   faPen,
   faRotateLeft,
   faRotateRight,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
-import { Button, Card, Layout, Typography } from "antd";
+import { Draggable, Droppable } from "@hello-pangea/dnd";
+import { Button, Card, Form, Layout, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { ButtonDiv } from "./CVBuilder.stc";
-const cardItems = ["Work Experience", "Education", "skills"];
+import { ButtonDiv, CVbuilderCard } from "./CVBuilder.stc";
+
 const { Title, Text, Paragraph } = Typography;
 
-const cardTitle = ["Work Experiences", "Educations", "Skills"];
-
-const handleDragEnd = (result) => {
-  if (!result.destination) return;
-
-  if (result.source.droppableId === "experiences") {
-    const reordered = reorder(
-      experiences,
-      result.source.index,
-      result.destination.index
-    );
-    setExperiences(reordered);
-  }
-
-  if (result.source.droppableId === "education") {
-    const reordered = reorder(
-      education,
-      result.source.index,
-      result.destination.index
-    );
-    setEducation(reordered);
-  }
-
-  if (result.source.droppableId === "skills") {
-    const reordered = reorder(
-      skills,
-      result.source.index,
-      result.destination.index
-    );
-    setSkills(reordered);
-  }
-};
-
-export default function ResumeCard({ resumeExperiences }) {
-  const paragraphRef = useRef(null);
+export default function ResumeCard({
+  resumeExperiences = [],
+  resumeEducation = [],
+  resumeSkills = [],
+  handleDeleteResumeItem,
+}) {
+  const [form] = Form.useForm();
+  const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(
-    "Experienced software engineer with 5+ years developing scalable web applications. Proven track record of leading cross-functional teams and delivering high-impact projects."
+    "Experienced software engineer with 5+ years developing scalable web applications."
   );
+  const paragraphRef = useRef(null);
+  const [sections, setSections] = useState([
+    { id: "resumeExperiences", title: "Work Experiences", type: "experience" },
+    { id: "resumeEducation", title: "Education", type: "education" },
+    { id: "resumeSkills", title: "Skills", type: "skill" },
+  ]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userData");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      form.setFieldsValue({
+        user: {
+          name: `${parsedUser.firstName} ${parsedUser.lastName}`,
+          email: parsedUser.email,
+        },
+      });
+    }
+  }, [form]);
+
   useEffect(() => {
     if (isEditing && paragraphRef.current) {
       const el = paragraphRef.current;
       el.focus();
-
       const range = document.createRange();
       range.selectNodeContents(el);
       range.collapse(false);
@@ -64,120 +59,205 @@ export default function ResumeCard({ resumeExperiences }) {
       sel.addRange(range);
     }
   }, [isEditing]);
+
+  useEffect(() => {
+    const storedSummary = localStorage.getItem("professionalSummary");
+    if (storedSummary) setText(storedSummary);
+  }, []);
+
+  const renderSection = (title, droppableId, items, type) => (
+    <CVbuilderCard style={{ border: "none" }}>
+      <Title level={3}>{title}</Title>
+
+      <Droppable droppableId={droppableId}>
+        {(provided, snapshot) => (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            style={{
+              minHeight: "150px",
+              padding: "10px",
+              border: snapshot.isDraggingOver
+                ? "1px dashed #1677ff"
+                : "1px solid #ddd",
+              borderRadius: "6px",
+              background: snapshot.isDraggingOver ? "#f5f9ff" : "#fff",
+            }}
+          >
+            {items.length === 0 && (
+              <Paragraph style={{ color: "gray" }}>
+                Drag your {title} here...
+              </Paragraph>
+            )}
+            {items.map((item, index) => (
+              <Draggable
+                key={`${type}-${item.id}`}
+                draggableId={`${type}-${item.id}`}
+                index={index}
+              >
+                {(provided, snapshot) => (
+                  <Card
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    style={{
+                      marginBottom: "8px",
+                      background: snapshot.isDragging ? "#eef3ff" : "#fff",
+                      ...provided.draggableProps.style,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <Title level={5}>
+                          {item.jobTitle || item.degree || item.name}
+                        </Title>
+                        <Text>
+                          {item.company || item.institution || item.category}
+                        </Text>
+                        {item.description && (
+                          <Paragraph
+                            style={{ fontSize: "12px", color: "gray" }}
+                          >
+                            {item.description}
+                          </Paragraph>
+                        )}
+                      </div>
+                      <div className="editDeleteBtns">
+                        <Button
+                          icon={<FontAwesomeIcon icon={faPen} />}
+                          type="primary"
+                          size="small"
+                        />
+                        <Button
+                          icon={<FontAwesomeIcon icon={faTrash} />}
+                          danger
+                          type="primary"
+                          size="small"
+                          onClick={() => handleDeleteResumeItem(type, item.id)}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </CVbuilderCard>
+  );
+
   return (
     <Layout>
       <Card style={{ position: "relative" }}>
-        <Title>John Doe</Title>
+        <Title level={2}>
+          {user ? `${user.firstName} ${user.lastName}` : "User Name"}
+        </Title>
         <Text>Senior Software Engineer</Text>
         <ButtonDiv>
           <Button>
-            {" "}
-            <FontAwesomeIcon
-              icon={faRotateLeft}
-              style={{
-                alignItems: "center",
-                fontSize: "10px",
-              }}
-            />
+            <FontAwesomeIcon icon={faRotateLeft} style={{ fontSize: "10px" }} />
           </Button>
           <Button>
-            {" "}
             <FontAwesomeIcon
               icon={faRotateRight}
-              style={{
-                alignItems: "center",
-                fontSize: "10px",
-              }}
+              style={{ fontSize: "10px" }}
             />
           </Button>
           <Button>
-            {" "}
-            <FontAwesomeIcon
-              icon={faArrowsSpin}
-              style={{
-                alignItems: "center",
-                fontSize: "10px",
-              }}
-            />
+            <FontAwesomeIcon icon={faArrowsSpin} style={{ fontSize: "10px" }} />
           </Button>
         </ButtonDiv>
       </Card>
 
-      <Card style={{ position: "relative", marginTop: "5px" }}>
-        <Title level={3}>Professional Summary</Title>
-        <Button
-          style={{ position: "absolute", right: "5px", top: "10px" }}
-          onClick={() => setIsEditing(true)}
-        >
-          <FontAwesomeIcon
-            icon={faPen}
-            style={{
-              alignItems: "center",
-              fontSize: "10px",
-            }}
-          />
-        </Button>
+      <Card style={{ marginTop: "10px" }}>
+        <CVbuilderCard style={{ position: "relative", border: "none" }}>
+          <Title level={3}>Professional Summary</Title>
+          <Button
+            style={{ position: "absolute", right: "5px", top: "10px" }}
+            onClick={() => setIsEditing(true)}
+          >
+            <FontAwesomeIcon icon={faPen} style={{ fontSize: "10px" }} />
+          </Button>
 
-        <Card
-          style={{
-            marginBottom: "20px",
-            background: isEditing ? "white" : "#eef1ff",
-            border: "1px solid #c9ccd1",
-          }}
-        >
-          <Paragraph
-            ref={paragraphRef}
-            contentEditable={isEditing}
-            suppressContentEditableWarning={true}
+          <Card
             style={{
-              color: "#6f6f70",
-              marginBottom: "8px",
-              outline: "none",
-              padding: "2px",
-            }}
-            onBlur={(e) => {
-              setText(e.currentTarget.textContent);
-              setIsEditing(false);
+              marginBottom: "20px",
+              background: isEditing ? "white" : "#eef1ff",
+              border: "1px solid #c9ccd1",
             }}
           >
-            {text}
-          </Paragraph>
-        </Card>
-      </Card>
+            <Paragraph
+              ref={paragraphRef}
+              contentEditable={isEditing}
+              suppressContentEditableWarning={true}
+              style={{
+                color: "#6f6f70",
+                outline: "none",
+                padding: "2px",
+              }}
+              onBlur={(e) => {
+                const newText = e.currentTarget.textContent;
+                setText(newText);
+                setIsEditing(false);
+                localStorage.setItem("professionalSummary", newText);
+              }}
+            >
+              {text}
+            </Paragraph>
+          </Card>
+        </CVbuilderCard>
 
-      {cardItems.map((cardItem, index) => (
-        <Card key={index} style={{ marginTop: "5px" }}>
-          <Title level={3}>{cardItem}</Title>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="resumeExperiences">
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {resumeExperiences.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={`resume-${item.id}`}
-                      index={index}
+        <Droppable droppableId="resumeSections" type="SECTION">
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              {sections.map((section, index) => (
+                <Draggable
+                  key={section.id}
+                  draggableId={section.id}
+                  index={index}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={{
+                        marginBottom: "15px",
+                        background: snapshot.isDragging
+                          ? "#f0f7ff"
+                          : "transparent",
+                        border: snapshot.isDragging
+                          ? "1px dashed #1677ff"
+                          : "none",
+                        ...provided.draggableProps.style,
+                      }}
                     >
-                      {(provided) => (
-                        <Card
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={{ marginBottom: "10px" }}
-                        >
-                          <Title level={5}>{item.jobTitle}</Title>
-                          <Text>{item.company}</Text>
-                        </Card>
+                      {renderSection(
+                        section.title,
+                        section.id,
+                        section.id === "resumeExperiences"
+                          ? resumeExperiences
+                          : section.id === "resumeEducation"
+                          ? resumeEducation
+                          : resumeSkills,
+                        section.type
                       )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Card>
-      ))}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </Card>
     </Layout>
   );
 }
