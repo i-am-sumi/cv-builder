@@ -9,23 +9,14 @@ export const CVBuilder = styled.div`
 `;
 
 export const CVbuilderCard = styled(Card)`
-  :hover {
-    background-color: #f3f4ff;
-  }
-  & .user-icon {
-    background-color: blue;
-    padding: 6px;
-    border-radius: 5px;
-    margin-top: 5px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    color: white;
-  }
-`;
-export const ExperienceCard = styled(Card)`
   position: relative;
+  transition: background-color 0.3s ease;
 
-  .EditDeleteBtns {
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  & .editDeleteBtns {
     position: absolute;
     top: 14px;
     right: 10px;
@@ -33,14 +24,32 @@ export const ExperienceCard = styled(Card)`
     gap: 5px;
   }
 
-  &:hover .EditDeleteBtns {
+  &:hover .editDeleteBtns {
+    display: flex;
+    background: none;
+  }
+`;
+
+export const ExperienceCard = styled(Card)`
+  position: relative;
+  margin-top: 5px;
+
+  & .editDeleteBtns {
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    display: none;
+    gap: 5px;
+  }
+
+  &:hover .editDeleteBtns {
     display: flex;
   }
 `;
 export const EducationCard = styled(Card)`
   position: relative;
 
-  .EditDeleteBtns {
+  .editDeleteBtns {
     position: absolute;
     top: 14px;
     right: 10px;
@@ -48,7 +57,22 @@ export const EducationCard = styled(Card)`
     gap: 5px;
   }
 
-  &:hover .EditDeleteBtns {
+  &:hover .editDeleteBtns {
+    display: flex;
+  }
+`;
+export const SkillCard = styled(Card)`
+  position: relative;
+
+  .editDeleteBtns {
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    display: none;
+    gap: 5px;
+  }
+
+  &:hover .editDeleteBtns {
     display: flex;
   }
 `;
@@ -75,4 +99,9 @@ export const Navber = styled(Header)`
   background-color: #e5ecfd;
   position: sticky;
   padding-top: 10px;
+`;
+
+export const CloneCard = styled(Card)`
+  border: 1px solid green;
+  border-radius: 8px;
 `;
