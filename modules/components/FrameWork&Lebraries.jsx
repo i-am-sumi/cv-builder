@@ -35,7 +35,13 @@ export default function FrameworkLibraries({ skills = [], loading }) {
         <Row gutter={16}>
           {frameworks.map((fw) => (
             <Col key={fw.id} xs={24} sm={16} md={16} lg={8}>
-              <Card variant="borderless" style={{ marginTop: "5px " }}>
+              <Card
+                variant="borderless"
+                style={{
+                  marginTop: "5px ",
+                  boxShadow: "0px 0px 2px 2px lightgrey",
+                }}
+              >
                 <Text style={{ fontSize: "14px", fontWeight: "bold" }}>
                   {fw.name}
                 </Text>
