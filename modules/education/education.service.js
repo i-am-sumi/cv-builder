@@ -27,7 +27,7 @@ export const createEducation = async (education) => {
       gpa: Number(education.gpa),
     },
   });
-  console.log("addeducation", res);
+
   return res.data;
 };
 export const updateEducation = async (education) => {
