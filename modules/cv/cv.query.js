@@ -29,3 +29,21 @@ export const useAddCV = () => {
     },
   });
 };
+
+export const useResumeData = () => {
+  const [resumeExperiences, setResumeExperiences] = useState([]);
+  const [resumeEducation, setResumeEducation] = useState([]);
+  const [resumeSkills, setResumeSkills] = useState([]);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("resumeData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      setResumeExperiences(parsedData.experiences || []);
+      setResumeEducation(parsedData.education || []);
+      setResumeSkills(parsedData.skills || []);
+    }
+  }, []);
+
+  return { resumeExperiences, resumeEducation, resumeSkills };
+};
