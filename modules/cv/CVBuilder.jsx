@@ -1,6 +1,5 @@
 "use client";
-
-import { faEye, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Button, Card, Col, Flex, Layout, Row, Tag, Typography } from "antd";
@@ -9,9 +8,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useEducations } from "../education/education.query";
 import { useExperiences } from "../experience/experience.query";
-import { AchievementLists } from "../experience/Experience.stc";
 import { useSkills } from "../skill/skill.query";
-import { EducationCard, ExperienceCard, Navber } from "./CVBuilder.stc";
+import {
+  CloneCard,
+  EducationCard,
+  ExperienceCard,
+  Navber,
+  SkillCard,
+} from "./CVBuilder.stc";
 import ResumeCard from "./ResumeCard";
 
 const { Title, Paragraph, Text } = Typography;
@@ -27,6 +31,7 @@ export default function CVBuilder() {
   const [resumeExperiences, setResumeExperiences] = useState([]);
   const [resumeEducation, setResumeEducation] = useState([]);
   const [resumeSkills, setResumeSkills] = useState([]);
+
   const { data: experiencesData } = useExperiences();
   const { data: educationData } = useEducations();
   const { data: skillData } = useSkills();
@@ -34,7 +39,6 @@ export default function CVBuilder() {
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
   const [skills, setSkills] = useState([]);
-
   const buttons = ["All", "Work", "Education", "Skills"];
   const [activeFilter, setActiveFilter] = useState("All");
 
@@ -44,9 +48,37 @@ export default function CVBuilder() {
     if (skillData) setSkills(skillData);
   }, [experiencesData, educationData, skillData]);
 
+  useEffect(() => {
+    const savedResumeData = localStorage.getItem("resumeData");
+    if (savedResumeData) {
+      const parsedData = JSON.parse(savedResumeData);
+      setResumeExperiences(parsedData.experiences || []);
+      setResumeEducation(parsedData.education || []);
+      setResumeSkills(parsedData.skills || []);
+    }
+  }, []);
+
+  const handleSave = () => {
+    const resumeData = {
+      experiences: resumeExperiences,
+      education: resumeEducation,
+      skills: resumeSkills,
+      summary: resumeSummary,
+    };
+    localStorage.setItem("resumeData", JSON.stringify(resumeData));
+  };
+  const handleDeleteResumeItem = (type, id) => {
+    if (type === "experience") {
+      setResumeExperiences(resumeExperiences.filter((item) => item.id !== id));
+    } else if (type === "education") {
+      setResumeEducation(resumeEducation.filter((item) => item.id !== id));
+    } else if (type === "skill") {
+      setResumeSkills(resumeSkills.filter((item) => item.id !== id));
+    }
+  };
+
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-
     const { source, destination } = result;
 
     if (source.droppableId === destination.droppableId) {
@@ -87,7 +119,6 @@ export default function CVBuilder() {
             { ...copiedItem, id: Date.now(), type: "experience" },
           ]);
         }
-
         if (source.droppableId === "education") {
           copiedItem = education[source.index];
           setResumeEducation([
@@ -95,7 +126,6 @@ export default function CVBuilder() {
             { ...copiedItem, id: Date.now(), type: "education" },
           ]);
         }
-
         if (source.droppableId === "skills") {
           copiedItem = skills[source.index];
           setResumeSkills([
@@ -131,25 +161,17 @@ export default function CVBuilder() {
               color="default"
               variant="outlined"
               style={{ fontWeight: "bold" }}
-              onClick={() => {
-                // LocalStorage এ resume data সংরক্ষণ
-                const resumeData = {
-                  experiences: resumeExperiences,
-                  education: resumeEducation,
-                  skills: resumeSkills,
-                };
-                localStorage.setItem("resumeData", JSON.stringify(resumeData));
-              }}
+              onClick={handleSave}
             >
               <Link href="/preview">
                 <FontAwesomeIcon icon={faEye} /> Preview
               </Link>
             </Button>
-
             <Button
               color="default"
               variant="outlined"
               style={{ fontWeight: "bold" }}
+              onClick={handleSave}
             >
               Save
             </Button>
@@ -167,7 +189,12 @@ export default function CVBuilder() {
               <Card style={{ background: "#edebf8" }}>
                 <Title level={3}>Content Library</Title>
                 <Text>Drag items to your resume</Text>
-                <Search placeholder="Search" allowClear size="large" />
+                <Search
+                  placeholder="Search"
+                  allowClear
+                  size="large"
+                  style={{ margin: "10px 0" }}
+                />
                 <Flex
                   gap="small"
                   wrap
@@ -190,9 +217,9 @@ export default function CVBuilder() {
                 </Flex>
 
                 {isVisible("Work") && (
-                  <Card title={<Title level={3}>Work Experinece</Title>}>
+                  <Card title={<Title level={3}>Work Experience</Title>}>
                     <Droppable droppableId="experiences">
-                      {(provided) => (
+                      {(provided, snapshot) => (
                         <div
                           {...provided.droppableProps}
                           ref={provided.innerRef}
@@ -204,74 +231,45 @@ export default function CVBuilder() {
                               index={index}
                             >
                               {(provided, snapshot) => (
-                                <ExperienceCard
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    marginTop: "5px",
-                                    border: snapshot.isDragging
-                                      ? "1px dashed #1677ff"
-                                      : "1px solid green",
-                                    borderRadius: "8px",
-                                    ...provided.draggableProps.style,
-                                  }}
-                                >
-                                  <Title level={5}>{exp.jobTitle}</Title>
-                                  <div className="EditDeleteBtns">
-                                    <Button
-                                      icon={
-                                        <FontAwesomeIcon
-                                          icon={faPen}
-                                          style={{
-                                            alignItems: "center",
-                                            fontSize: "10px",
-                                            color: "white",
-                                          }}
-                                        />
-                                      }
-                                      type="primary"
-                                      size="small"
-                                      onClick={() => handleEdit(edu)}
-                                    ></Button>
-                                    <Button
-                                      icon={
-                                        <FontAwesomeIcon
-                                          icon={faTrash}
-                                          style={{
-                                            alignItems: "center",
-                                            fontSize: "10px",
-                                            color: "white",
-                                          }}
-                                        />
-                                      }
-                                      danger
-                                      type="primary"
-                                      size="small"
-                                      onClick={() => handleDelete(edu.id)}
-                                    ></Button>
-                                  </div>
-                                  <Text>{exp.company}</Text>
-                                  <Paragraph
-                                    style={{ fontSize: "12px", color: "grey" }}
+                                <>
+                                  <ExperienceCard
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    style={{
+                                      border: snapshot.isDragging
+                                        ? "1px dashed #1677ff"
+                                        : "1px solid green",
+                                      borderRadius: "8px",
+                                      ...provided.draggableProps.style,
+                                    }}
                                   >
-                                    {exp.description}
-                                  </Paragraph>
-                                  <Text>Key Achievements:</Text>
-                                  <AchievementLists>
-                                    {exp.achievements?.map((a, i) => (
-                                      <li key={i}>{a}</li>
-                                    ))}
-                                  </AchievementLists>
-                                  <Text>Technologies:</Text>
-                                  <div className="education-item">
-                                    {exp.technologies?.map((t, i) => (
-                                      <Tag color="blue" key={i}>
-                                        {t}
-                                      </Tag>
-                                    ))}
-                                  </div>
-                                </ExperienceCard>
+                                    <Title level={5}>{exp.jobTitle}</Title>
+                                    <Text>{exp.company}</Text>
+                                    <Paragraph
+                                      style={{
+                                        fontSize: "12px",
+                                        color: "grey",
+                                      }}
+                                    >
+                                      {exp.description}
+                                    </Paragraph>
+                                  </ExperienceCard>
+                                  {snapshot.isDragging && (
+                                    <CloneCard>
+                                      <Title level={5}>{exp.jobTitle}</Title>
+                                      <Text>{exp.company}</Text>
+                                      <Paragraph
+                                        style={{
+                                          fontSize: "12px",
+                                          color: "grey",
+                                        }}
+                                      >
+                                        {exp.description}
+                                      </Paragraph>
+                                    </CloneCard>
+                                  )}
+                                </>
                               )}
                             </Draggable>
                           ))}
@@ -300,66 +298,46 @@ export default function CVBuilder() {
                               index={index}
                             >
                               {(provided, snapshot) => (
-                                <EducationCard
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    marginTop: "5px",
-                                    border: snapshot.isDragging
-                                      ? "1px dashed #1677ff"
-                                      : "1px solid green",
-                                    borderRadius: "8px",
-                                    ...provided.draggableProps.style,
-                                  }}
-                                >
-                                  <Title level={5}>{edu.degree}</Title>
-                                  <div className="EditDeleteBtns">
-                                    <Button
-                                      icon={
-                                        <FontAwesomeIcon
-                                          icon={faPen}
-                                          style={{
-                                            alignItems: "center",
-                                            fontSize: "10px",
-                                            color: "white",
-                                          }}
-                                        />
-                                      }
-                                      type="primary"
-                                      size="small"
-                                      onClick={() => handleEdit(edu)}
-                                    ></Button>
-                                    <Button
-                                      icon={
-                                        <FontAwesomeIcon
-                                          icon={faTrash}
-                                          style={{
-                                            alignItems: "center",
-                                            fontSize: "10px",
-                                            color: "white",
-                                          }}
-                                        />
-                                      }
-                                      danger
-                                      type="primary"
-                                      size="small"
-                                      onClick={() => handleDelete(edu.id)}
-                                    ></Button>
-                                  </div>
-                                  <Text>{edu.institution}</Text>
-                                  <Paragraph
-                                    style={{ fontSize: "12px", color: "grey" }}
+                                <>
+                                  <EducationCard
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    style={{
+                                      marginTop: "5px",
+                                      border: snapshot.isDragging
+                                        ? "1px dashed #1677ff"
+                                        : "1px solid green",
+                                      borderRadius: "8px",
+                                      ...provided.draggableProps.style,
+                                    }}
                                   >
-                                    {edu.description}
-                                  </Paragraph>
-                                  <Text>Key Achievements:</Text>
-                                  <AchievementLists>
-                                    {edu.achievements?.map((a, i) => (
-                                      <li key={i}>{a}</li>
-                                    ))}
-                                  </AchievementLists>
-                                </EducationCard>
+                                    <Title level={5}>{edu.degree}</Title>
+                                    <Text>{edu.institution}</Text>
+                                    <Paragraph
+                                      style={{
+                                        fontSize: "12px",
+                                        color: "grey",
+                                      }}
+                                    >
+                                      {edu.description}
+                                    </Paragraph>
+                                  </EducationCard>
+                                  {snapshot.isDragging && (
+                                    <CloneCard>
+                                      <Title level={5}>{edu.degree}</Title>
+                                      <Text>{edu.institution}</Text>
+                                      <Paragraph
+                                        style={{
+                                          fontSize: "12px",
+                                          color: "grey",
+                                        }}
+                                      >
+                                        {edu.description}
+                                      </Paragraph>
+                                    </CloneCard>
+                                  )}
+                                </>
                               )}
                             </Draggable>
                           ))}
@@ -380,7 +358,6 @@ export default function CVBuilder() {
                         const uniqueCategories = [
                           ...new Set(skills.map((s) => s.category)),
                         ];
-
                         return (
                           <div
                             {...provided.droppableProps}
@@ -393,30 +370,50 @@ export default function CVBuilder() {
                                 index={index}
                               >
                                 {(provided, snapshot) => (
-                                  <Card
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      marginTop: "5px",
-                                      border: snapshot.isDragging
-                                        ? "1px dashed #1677ff"
-                                        : "1px solid green",
-                                      borderRadius: "8px",
-                                      ...provided.draggableProps.style,
-                                    }}
-                                  >
-                                    <Title level={4}>{category}</Title>
-                                    <ul style={{ marginLeft: "15px" }}>
-                                      {skills
-                                        .filter((s) => s.category === category)
-                                        .map((s) => (
-                                          <Tag color="blue" key={s.id}>
-                                            <Text>{s.name}</Text>
-                                          </Tag>
-                                        ))}
-                                    </ul>
-                                  </Card>
+                                  <>
+                                    <SkillCard
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      style={{
+                                        marginTop: "5px",
+                                        border: snapshot.isDragging
+                                          ? "1px dashed #1677ff"
+                                          : "1px solid green",
+                                        borderRadius: "8px",
+                                        ...provided.draggableProps.style,
+                                      }}
+                                    >
+                                      <Title level={4}>{category}</Title>
+                                      <ul style={{ marginLeft: "15px" }}>
+                                        {skills
+                                          .filter(
+                                            (s) => s.category === category
+                                          )
+                                          .map((s) => (
+                                            <Tag color="blue" key={s.id}>
+                                              <Text>{s.name}</Text>
+                                            </Tag>
+                                          ))}
+                                      </ul>
+                                    </SkillCard>
+                                    {snapshot.isDragging && (
+                                      <CloneCard>
+                                        <Title level={4}>{category}</Title>
+                                        <ul style={{ marginLeft: "15px" }}>
+                                          {skills
+                                            .filter(
+                                              (s) => s.category === category
+                                            )
+                                            .map((s) => (
+                                              <Tag color="blue" key={s.id}>
+                                                <Text>{s.name}</Text>
+                                              </Tag>
+                                            ))}
+                                        </ul>
+                                      </CloneCard>
+                                    )}
+                                  </>
                                 )}
                               </Draggable>
                             ))}
@@ -435,6 +432,7 @@ export default function CVBuilder() {
                 resumeExperiences={resumeExperiences}
                 resumeEducation={resumeEducation}
                 resumeSkills={resumeSkills}
+                handleDeleteResumeItem={handleDeleteResumeItem}
               />
             </Col>
           </Row>
