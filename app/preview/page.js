@@ -21,10 +21,10 @@ export default function PreviewPage() {
     skills: [],
   });
 
-  // localStorage থেকে ডেটা লোড করা
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
     const storedResume = localStorage.getItem("resumeData");
+    const storeSummary = localStorage.getItem("professionalSummary");
 
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     const parsedResume = storedResume ? JSON.parse(storedResume) : {};
@@ -32,6 +32,7 @@ export default function PreviewPage() {
     setResumeData({
       user: parsedUser,
       summary:
+        storeSummary ||
         parsedResume.summary ||
         "Experienced software engineer with 5+ years developing scalable web applications. Proven track record of leading cross-functional teams and delivering high-impact projects.",
       experiences: parsedResume.experiences || [],
@@ -40,7 +41,6 @@ export default function PreviewPage() {
     });
   }, []);
 
-  // Helper: Section Render
   const renderSection = (title, items) => (
     <CVbuilderCard style={{ border: "none" }}>
       <Title level={3}>{title}</Title>
