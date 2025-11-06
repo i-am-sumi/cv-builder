@@ -62,7 +62,14 @@ export default function AppHeader() {
   return (
     <Navber>
       <div>
-        <Image src="/assect/logo.png" alt="Logo" width={95} height={75} />
+        <Image
+          src="/assect/logo.png"
+          alt="Logo"
+          width={95}
+          height={75}
+          style={{ width: "100px", height: "auto" }}
+          priority
+        />
       </div>
 
       <Menu
