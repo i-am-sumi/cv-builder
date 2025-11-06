@@ -21,13 +21,13 @@ import { Button, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import Layout from "antd/es/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
+
 import { EditDeleteBtns, EducationListItem, EduHeader } from "./Education.stc";
 
 const { Title, Text, Paragraph } = Typography;
 
 export default function Education() {
   const { data, isLoading, error } = useEducations();
-
   const { mutate: addEducation, isLoading: creating } = useAddEducation();
   const { mutate: updateEducation, isLoading: updating } = useUpdateEducation();
   const { mutate: deleteEducation } = useDeleteEducation();
@@ -46,7 +46,7 @@ export default function Education() {
   };
 
   const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this experience?")) {
+    if (confirm("Are you sure you want to delete this education?")) {
       deleteEducation(id, {
         onSuccess: () => message.success("Experience deleted successfully"),
         onError: () => message.error("Failed to delete"),
