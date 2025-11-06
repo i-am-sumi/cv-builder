@@ -1,8 +1,13 @@
 "use client";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faEye,
+  faPen,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { Button, Card, Col, Flex, Layout, Row, Tag, Typography } from "antd";
+import { Button, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import Search from "antd/es/input/Search";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +15,7 @@ import { useEducations } from "../education/education.query";
 import { useExperiences } from "../experience/experience.query";
 import { useSkills } from "../skill/skill.query";
 import {
+  CheckBoxIcon,
   CloneCard,
   EducationCard,
   ExperienceCard,
@@ -31,6 +37,7 @@ export default function CVBuilder() {
   const [resumeExperiences, setResumeExperiences] = useState([]);
   const [resumeEducation, setResumeEducation] = useState([]);
   const [resumeSkills, setResumeSkills] = useState([]);
+  const [resumeSummary, setResumeSummary] = useState("");
 
   const { data: experiencesData } = useExperiences();
   const { data: educationData } = useEducations();
@@ -69,11 +76,17 @@ export default function CVBuilder() {
   };
   const handleDeleteResumeItem = (type, id) => {
     if (type === "experience") {
-      setResumeExperiences(resumeExperiences.filter((item) => item.id !== id));
+      const newItems = resumeExperiences.filter((item) => item.id !== id);
+      setResumeExperiences(newItems);
+      localStorage.setItem("resumeExperiences", JSON.stringify(newItems));
     } else if (type === "education") {
-      setResumeEducation(resumeEducation.filter((item) => item.id !== id));
+      const newItems = resumeEducation.filter((item) => item.id !== id);
+      setResumeEducation(newItems);
+      localStorage.setItem("resumeEducation", JSON.stringify(newItems));
     } else if (type === "skill") {
-      setResumeSkills(resumeSkills.filter((item) => item.id !== id));
+      const newItems = resumeSkills.filter((item) => item.id !== id);
+      setResumeSkills(newItems);
+      localStorage.setItem("resumeSkills", JSON.stringify(newItems));
     }
   };
 
@@ -141,7 +154,7 @@ export default function CVBuilder() {
     activeFilter === "All" || activeFilter === category;
 
   return (
-    <Layout>
+    <>
       <Navber>
         <div
           style={{
@@ -239,12 +252,33 @@ export default function CVBuilder() {
                                     style={{
                                       border: snapshot.isDragging
                                         ? "1px dashed #1677ff"
-                                        : "1px solid green",
+                                        : "1px solid #1f8f09",
                                       borderRadius: "8px",
                                       ...provided.draggableProps.style,
                                     }}
                                   >
+                                    <CheckBoxIcon>
+                                      <FontAwesomeIcon icon={faCheck} />
+                                    </CheckBoxIcon>
                                     <Title level={5}>{exp.jobTitle}</Title>
+                                    <div className="editDeleteBtns">
+                                      <Button
+                                        icon={<FontAwesomeIcon icon={faPen} />}
+                                        type="primary"
+                                        size="small"
+                                      />
+                                      <Button
+                                        icon={
+                                          <FontAwesomeIcon icon={faTrash} />
+                                        }
+                                        danger
+                                        type="primary"
+                                        size="small"
+                                        onClick={() =>
+                                          handleDeleteResumeItem(type, item.id)
+                                        }
+                                      />
+                                    </div>
                                     <Text>{exp.company}</Text>
                                     <Paragraph
                                       style={{
@@ -307,12 +341,33 @@ export default function CVBuilder() {
                                       marginTop: "5px",
                                       border: snapshot.isDragging
                                         ? "1px dashed #1677ff"
-                                        : "1px solid green",
+                                        : "1px solid #07b62d",
                                       borderRadius: "8px",
                                       ...provided.draggableProps.style,
                                     }}
                                   >
+                                    <CheckBoxIcon>
+                                      <FontAwesomeIcon icon={faCheck} />
+                                    </CheckBoxIcon>
                                     <Title level={5}>{edu.degree}</Title>
+                                    <div className="editDeleteBtns">
+                                      <Button
+                                        icon={<FontAwesomeIcon icon={faPen} />}
+                                        type="primary"
+                                        size="small"
+                                      />
+                                      <Button
+                                        icon={
+                                          <FontAwesomeIcon icon={faTrash} />
+                                        }
+                                        danger
+                                        type="primary"
+                                        size="small"
+                                        onClick={() =>
+                                          handleDeleteResumeItem(type, item.id)
+                                        }
+                                      />
+                                    </div>
                                     <Text>{edu.institution}</Text>
                                     <Paragraph
                                       style={{
@@ -379,12 +434,38 @@ export default function CVBuilder() {
                                         marginTop: "5px",
                                         border: snapshot.isDragging
                                           ? "1px dashed #1677ff"
-                                          : "1px solid green",
+                                          : "1px solid #08a00f",
                                         borderRadius: "8px",
                                         ...provided.draggableProps.style,
                                       }}
                                     >
+                                      <CheckBoxIcon>
+                                        <FontAwesomeIcon icon={faCheck} />
+                                      </CheckBoxIcon>
                                       <Title level={4}>{category}</Title>
+                                      <div className="editDeleteBtns">
+                                        <Button
+                                          icon={
+                                            <FontAwesomeIcon icon={faPen} />
+                                          }
+                                          type="primary"
+                                          size="small"
+                                        />
+                                        <Button
+                                          icon={
+                                            <FontAwesomeIcon icon={faTrash} />
+                                          }
+                                          danger
+                                          type="primary"
+                                          size="small"
+                                          onClick={() =>
+                                            handleDeleteResumeItem(
+                                              type,
+                                              item.id
+                                            )
+                                          }
+                                        />
+                                      </div>
                                       <ul style={{ marginLeft: "15px" }}>
                                         {skills
                                           .filter(
@@ -438,6 +519,6 @@ export default function CVBuilder() {
           </Row>
         </DragDropContext>
       </div>
-    </Layout>
+    </>
   );
 }
