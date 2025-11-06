@@ -38,8 +38,9 @@ export default function ExperienceModal({
       confirmLoading={loading}
       style={{ textAlign: "center" }}
       afterClose={() => form.resetFields()}
+      destroyOnHidden
     >
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
+      <Form form={form} layout="vertical" onFinish={onSubmit} preserve={false}>
         <Form.Item name="jobTitle" label="Job Title">
           <Input />
         </Form.Item>
