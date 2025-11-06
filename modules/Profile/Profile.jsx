@@ -60,7 +60,6 @@ export default function Profile() {
   return (
     <Layout>
       <ProfileSection>
-        {/* Header Section */}
         <div className="div">
           <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
             <Avatar
@@ -115,10 +114,8 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Main Section */}
         <Layout style={{ padding: "24px 0" }}>
           <Row gutter={[16, 16]}>
-            {/* Left Side Tabs */}
             <Col xs={24} sm={16} md={12} lg={16}>
               <Card>
                 <Tabs
@@ -127,7 +124,6 @@ export default function Profile() {
                   items={tabItems}
                 />
 
-                {/* ✅ Always render Form to prevent warning */}
                 <Form form={form} layout="vertical" style={{ width: "100%" }}>
                   {activeTab === "1" && (
                     <>
@@ -179,7 +175,6 @@ export default function Profile() {
                   )}
                 </Form>
 
-                {/* Experience Tab */}
                 {activeTab === "2" && (
                   <Col>
                     <Title level={3}>Work Experience</Title>
@@ -203,7 +198,6 @@ export default function Profile() {
                   </Col>
                 )}
 
-                {/* Education Tab */}
                 {activeTab === "3" && (
                   <Col>
                     <Title level={3}>Education</Title>
@@ -224,7 +218,6 @@ export default function Profile() {
                   </Col>
                 )}
 
-                {/* Skills Tab */}
                 {activeTab === "4" && (
                   <Col>
                     <Title level={3}>Skills</Title>
@@ -243,9 +236,7 @@ export default function Profile() {
               </Card>
             </Col>
 
-            {/* Right Side Widgets */}
             <Col xs={24} sm={8} md={12} lg={8}>
-              {/* Profile Completion */}
               <Card
                 title={<Title level={4}>Profile Completion</Title>}
                 style={{ width: "100%" }}
@@ -278,7 +269,6 @@ export default function Profile() {
                 </Flex>
               </Card>
 
-              {/* Quick Actions */}
               <Card
                 title={<Title level={4}>Quick Actions</Title>}
                 style={{ marginTop: "20px", width: "100%" }}
