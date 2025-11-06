@@ -1,13 +1,7 @@
 "use client";
 
-import { ButtonDiv, CVbuilderCard } from "@/modules/cv/CVBuilder.stc";
-import {
-  faArrowsSpin,
-  faRotateLeft,
-  faRotateRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Layout, Tag, Typography } from "antd";
+import { MailOutlined } from "@ant-design/icons";
+import { Col, Divider, Layout, Row, Tag, Typography } from "antd";
 import { useEffect, useState } from "react";
 
 const { Title, Text, Paragraph } = Typography;
@@ -34,116 +28,144 @@ export default function PreviewPage() {
       summary:
         storeSummary ||
         parsedResume.summary ||
-        "Experienced software engineer with 5+ years developing scalable web applications. Proven track record of leading cross-functional teams and delivering high-impact projects.",
+        "Experienced software engineer passionate about crafting scalable web applications with modern technologies.",
       experiences: parsedResume.experiences || [],
       education: parsedResume.education || [],
       skills: parsedResume.skills || [],
     });
   }, []);
 
-  const renderSection = (title, items) => (
-    <CVbuilderCard style={{ border: "none" }}>
-      <Title level={3}>{title}</Title>
-      <div
-        style={{
-          minHeight: "150px",
-          border: "1px solid gray",
-          padding: "10px",
-          borderRadius: "6px",
-        }}
-      >
-        {items.length === 0 && (
-          <Paragraph style={{ color: "gray" }}>No {title} added yet.</Paragraph>
-        )}
-
-        {items.map((item, i) => (
-          <Card
-            key={i}
-            style={{
-              marginBottom: "10px",
-              background: "#fefefe",
-              border: "1px solid #d9d9d9",
-            }}
-          >
-            <Title level={5}>{item.jobTitle || item.degree || item.name}</Title>
-            <Text>{item.company || item.institution || item.category}</Text>
-            {item.description && (
-              <Paragraph style={{ fontSize: "12px", color: "gray" }}>
-                {item.description}
-              </Paragraph>
-            )}
-            {item.technologies && (
-              <div style={{ marginTop: "5px" }}>
-                {item.technologies.map((tech, idx) => (
-                  <Tag key={idx} color="blue">
-                    {tech}
-                  </Tag>
-                ))}
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
-    </CVbuilderCard>
-  );
-
   const { user, summary, experiences, education, skills } = resumeData;
 
   return (
-    <Layout>
-      <Card style={{ position: "relative" }}>
-        <Title level={2}>
-          {user ? `${user.firstName} ${user.lastName}` : "User Name"}
-        </Title>
-        <Text>
-          {user ? "Senior Software Engineer" : "Your Professional Title"}
-        </Text>
+    <Layout
+      style={{
+        padding: "20px",
+        margin: "50px auto",
+        maxWidth: "800px",
+        borderRadius: "10px",
+      }}
+    >
+      <div>
+        <div style={{ textAlign: "center" }}>
+          <Title>
+            {user ? `${user.firstName} ${user.lastName}` : "Your Name"}
+          </Title>
+          <Title level={3}>{experiences[0]?.jobTitle || "Web Developer"}</Title>
 
-        <ButtonDiv>
-          <Button>
-            <FontAwesomeIcon icon={faRotateLeft} style={{ fontSize: "10px" }} />
-          </Button>
-          <Button>
-            <FontAwesomeIcon
-              icon={faRotateRight}
-              style={{ fontSize: "10px" }}
-            />
-          </Button>
-          <Button>
-            <FontAwesomeIcon icon={faArrowsSpin} style={{ fontSize: "10px" }} />
-          </Button>
-        </ButtonDiv>
-      </Card>
-
-      <Card style={{ marginTop: "10px" }}>
-        <CVbuilderCard style={{ border: "none", position: "relative" }}>
-          <Title level={3}>Professional Summary</Title>
-          <Card
-            style={{
-              marginBottom: "20px",
-              background: "#eef1ff",
-              border: "1px solid #c9ccd1",
-            }}
+          <div
+            style={{ display: "flex", gap: "5px", justifyContent: "center" }}
           >
-            <Paragraph
-              style={{
-                color: "#6f6f70",
-                marginBottom: "8px",
-                fontSize: "14px",
-                lineHeight: "1.6",
-              }}
-            >
-              {summary}
-            </Paragraph>
-          </Card>
-        </CVbuilderCard>
+            <span>
+              <MailOutlined style={{ marginRight: "5px" }} />
+              {user?.email || "you@example.com"}
+            </span>
+          </div>
+        </div>
 
-        {renderSection("Work Experiences", experiences)}
+        <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
 
-        {renderSection("Education", education)}
+        <div className="space-y-8">
+          <Row gutter={[24, 16]} align="top">
+            <Col xs={24} md={6}>
+              <Title
+                level={4}
+                style={{ fontWeight: "bold", color: "#334de4ff" }}
+              >
+                Professional Summary
+              </Title>
+            </Col>
+            <Col xs={24} md={18}>
+              <Paragraph style={{ fontSize: "16px" }}>{summary}</Paragraph>
+            </Col>
+          </Row>
 
-        {renderSection("Skills", skills)}
-      </Card>
+          <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
+
+          <Row gutter={[24, 16]} align="top">
+            <Col xs={24} md={6}>
+              <Title
+                level={4}
+                style={{ fontWeight: "bold", color: "#324ce0ff" }}
+              >
+                Skills
+              </Title>
+            </Col>
+            <Col xs={24} md={18}>
+              <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+                {skills.length > 0 ? (
+                  skills.map((skill, i) => (
+                    <Tag key={i} color="blue">
+                      {skill.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text type="secondary">No skills added.</Text>
+                )}
+              </div>
+            </Col>
+          </Row>
+
+          <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
+          <Row gutter={[24, 16]} align="top">
+            <Col xs={24} md={6}>
+              <Title
+                level={4}
+                style={{ fontWeight: "bold", color: "#3a56f5ff" }}
+              >
+                Work Experience
+              </Title>
+            </Col>
+            <Col xs={24} md={18}>
+              {experiences.length > 0 ? (
+                experiences.map((exp, i) => (
+                  <div key={i} style={{ marginBottom: "5px" }}>
+                    <Title level={5}>{exp.jobTitle || "Job Title"}</Title>
+                    <Text style={{ fontSize: "13px" }}>
+                      {exp.company || "Company Name"} |{" "}
+                      {exp.duration || "2020 - Present"}
+                    </Text>
+                    <Paragraph>
+                      {exp.description ||
+                        "Responsible for developing, testing, and deploying scalable web applications using modern frameworks."}
+                    </Paragraph>
+                  </div>
+                ))
+              ) : (
+                <Text type="secondary">No work experience added.</Text>
+              )}
+            </Col>
+          </Row>
+
+          <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
+
+          <Row gutter={[24, 16]} align="top">
+            <Col xs={24} md={6}>
+              <Title
+                level={4}
+                style={{ fontWeight: "bold", color: "#2c45d4ff" }}
+              >
+                Education
+              </Title>
+            </Col>
+            <Col xs={24} md={18}>
+              {education.length > 0 ? (
+                education.map((edu, i) => (
+                  <div key={i} style={{ marginBottom: "5px" }}>
+                    <Title level={5}>{edu.degree || "Degree Title"}</Title>
+                    <Text>
+                      {edu.institution || "Institution Name"} |{" "}
+                      {edu.year || "2020"}
+                    </Text>
+                  </div>
+                ))
+              ) : (
+                <Text type="secondary">No education added.</Text>
+              )}
+            </Col>
+          </Row>
+        </div>
+      </div>
     </Layout>
   );
 }
