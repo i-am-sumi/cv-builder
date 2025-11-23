@@ -1,5 +1,5 @@
 import HomeSection from "@/modules/components/HomeSection/HomeSection";
 
-export default function Home() {
+export default function App() {
   return <HomeSection />;
 }
