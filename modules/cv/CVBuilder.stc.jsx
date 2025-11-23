@@ -47,50 +47,14 @@ export const ExperienceCard = styled(Card)`
   position: relative;
   margin-top: 5px;
   background-color: #eaffea;
-
-  & .editDeleteBtns {
-    position: absolute;
-    top: 14px;
-    right: 10px;
-    display: none;
-    gap: 5px;
-  }
-
-  &:hover .editDeleteBtns {
-    display: flex;
-  }
 `;
 export const EducationCard = styled(Card)`
   position: relative;
   background-color: #eaffea;
-
-  & .editDeleteBtns {
-    position: absolute;
-    top: 14px;
-    right: 10px;
-    display: none;
-    gap: 5px;
-  }
-
-  &:hover .editDeleteBtns {
-    display: flex;
-  }
 `;
 export const SkillCard = styled(Card)`
   position: relative;
   background-color: #eaffea;
-
-  .editDeleteBtns {
-    position: absolute;
-    top: 14px;
-    right: 10px;
-    display: none;
-    gap: 5px;
-  }
-
-  &:hover .editDeleteBtns {
-    display: flex;
-  }
 `;
 
 export const Iconwrapper = styled.div`
