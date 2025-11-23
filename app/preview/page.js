@@ -81,32 +81,6 @@ export default function PreviewPage() {
           </Row>
 
           <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
-
-          <Row gutter={[24, 16]} align="top">
-            <Col xs={24} md={6}>
-              <Title
-                level={4}
-                style={{ fontWeight: "bold", color: "#324ce0ff" }}
-              >
-                Skills
-              </Title>
-            </Col>
-            <Col xs={24} md={18}>
-              <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
-                {skills.length > 0 ? (
-                  skills.map((skill, i) => (
-                    <Tag key={i} color="blue">
-                      {skill.name}
-                    </Tag>
-                  ))
-                ) : (
-                  <Text type="secondary">No skills added.</Text>
-                )}
-              </div>
-            </Col>
-          </Row>
-
-          <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
           <Row gutter={[24, 16]} align="top">
             <Col xs={24} md={6}>
               <Title
@@ -162,6 +136,32 @@ export default function PreviewPage() {
               ) : (
                 <Text type="secondary">No education added.</Text>
               )}
+            </Col>
+          </Row>
+
+          <Divider style={{ marginTop: "15px", marginBottom: "15px" }} />
+
+          <Row gutter={[24, 16]} align="top">
+            <Col xs={24} md={6}>
+              <Title
+                level={4}
+                style={{ fontWeight: "bold", color: "#324ce0ff" }}
+              >
+                Skills
+              </Title>
+            </Col>
+            <Col xs={24} md={18}>
+              <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+                {skills.length > 0 ? (
+                  skills.map((skill, i) => (
+                    <Tag key={i} color="blue">
+                      {skill.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text type="secondary">No skills added.</Text>
+                )}
+              </div>
             </Col>
           </Row>
         </div>
