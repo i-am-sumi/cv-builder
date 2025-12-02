@@ -40,7 +40,22 @@ export default function ExperienceModal({
       afterClose={() => form.resetFields()}
       destroyOnHidden
     >
-      <Form form={form} layout="vertical" onFinish={onSubmit} preserve={false}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onSubmit}
+        preserve={false}
+        initialValues={{
+          jobTitle: "Senior frontend developer",
+          company: "Work from home",
+          location: "Sylhet",
+          startDate: "2025-11-02",
+          endDate: "2025-11-30",
+          description: "hello world",
+          achievements: "master,bachelor",
+          technologies: "html,css,js",
+        }}
+      >
         <Form.Item name="jobTitle" label="Job Title">
           <Input />
         </Form.Item>
