@@ -28,7 +28,17 @@ export default function SkillModal({
       confirmLoading={loading}
       afterClose={() => form.resetFields()}
     >
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onSubmit}
+        initialValues={{
+          name: "HTML",
+          level: "beginner",
+          category: "language",
+          yearsOfExperience: 3,
+        }}
+      >
         <Form.Item
           name="name"
           label="Skill Name"
