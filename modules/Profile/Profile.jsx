@@ -33,7 +33,6 @@ export default function Profile() {
   const { data: skillData } = useSkills();
   const { data: experiencesData } = useExperiences();
 
-  // LocalStorage থেকে user data লোড করা
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
     if (storedUser) {
