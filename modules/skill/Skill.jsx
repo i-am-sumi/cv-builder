@@ -22,14 +22,15 @@ import {
   Col,
   Flex,
   Layout,
+  message,
   Progress,
   Row,
   Tag,
   Typography,
-  message,
 } from "antd";
 import Image from "next/image";
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import SkillModal from "../components/modal/SkillModal";
 import { SkillComponents, ToolsCard } from "./Skill.stc";
 
@@ -55,12 +56,14 @@ export default function Skill() {
   };
 
   const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this skill?")) {
-      deleteSkill(id, {
-        onSuccess: () => message.success("Skill deleted successfully"),
-        onError: () => message.error("Failed to delete"),
-      });
-    }
+    deleteSkill(id, {
+      onSuccess: () => {
+        toast.success("Skill deleted successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to delete education!");
+      },
+    });
   };
 
   const handleSubmit = (formValues) => {
@@ -97,6 +100,7 @@ export default function Skill() {
 
   return (
     <Layout>
+      <ToastContainer />
       <SkillComponents>
         <div style={{ position: "relative", marginBottom: "10px" }}>
           {" "}
