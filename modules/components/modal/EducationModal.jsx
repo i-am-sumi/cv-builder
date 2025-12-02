@@ -16,13 +16,12 @@ export default function EducationModal({
     if (initialData) {
       form.setFieldsValue({
         ...initialData,
-        achievements: Array.isArray(initialData.achievements)
+        achievements: Array.isArray(initialData?.achievements)
           ? initialData.achievements.join(", ")
-          : initialData.achievements || "",
-        technologies: Array.isArray(initialData.technologies)
-          ? initialData.technologies.join(", ")
-          : initialData.technologies || "",
+          : initialData?.achievements || "",
       });
+    } else {
+      form.resetFields();
     }
   }, [initialData, form]);
 
@@ -35,9 +34,25 @@ export default function EducationModal({
       onOk={() => form.submit()}
       okText={initialData ? "Update" : "Create"}
       confirmLoading={loading}
-      afterClose={() => form.resetFields()} // ✅ modal বন্ধ হওয়ার পরে data clear
+      afterClose={() => form.resetFields()}
     >
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onSubmit}
+        initialValues={{
+          degree: "bachelor of arts",
+          institution: "Sylhet Government Women's College",
+          degreeType: "master",
+          location: "Sylhet",
+          startDate: "2025-11-02",
+          endDate: "2025-11-30",
+          gpa: 3.33,
+          description: "hello world",
+          achievements: "html, css",
+          fieldOfStudy: "bachelor of arts",
+        }}
+      >
         <Form.Item name="degree" label="Degree">
           <Input />
         </Form.Item>
@@ -66,7 +81,6 @@ export default function EducationModal({
           name="gpa"
           label="GPA"
           rules={[
-            { required: true, message: "Please enter GPA" },
             {
               type: "number",
               min: 0,
@@ -75,7 +89,7 @@ export default function EducationModal({
             },
           ]}
         >
-          <InputNumber step={0.01} min={0} max={4} style={{ width: "100%" }} />
+          <InputNumber min={0} max={4} step={0.01} style={{ width: "100%" }} />
         </Form.Item>
 
         <Form.Item name="description" label="Description">
