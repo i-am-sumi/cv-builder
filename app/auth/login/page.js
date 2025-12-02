@@ -35,28 +35,18 @@ const LoginForm = () => {
     login(payload, {
       onSuccess: (response) => {
         const email = response?.user?.email;
-
-        let firstName = response?.user?.firstName;
-        let lastName = response?.user?.lastName;
-
-        if (!firstName || !lastName) {
-          const namePart = email.split("@")[0];
-          const parts = namePart.split(".");
-          firstName =
-            parts[0]?.charAt(0).toUpperCase() + parts[0]?.slice(1) ||
-            "Candidate";
-          lastName =
-            parts[1]?.charAt(0).toUpperCase() + parts[1]?.slice(1) || "";
-        }
-
         const userData = {
-          firstName,
-          lastName,
+          firstName: response?.user?.firstName,
+          lastName: response?.user?.lastName,
           email,
           role: response?.user?.role || "Candidate",
         };
 
         localStorage.setItem("userData", JSON.stringify(userData));
+        localStorage.setItem("token", response.accessToken);
+
+        window.dispatchEvent(new Event("user-updated"));
+
         router.push("/profile");
       },
     });
