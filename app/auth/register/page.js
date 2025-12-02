@@ -49,6 +49,7 @@ const RegisterForm = () => {
         };
 
         localStorage.setItem("userData", JSON.stringify(userData));
+        window.dispatchEvent(new Event("user-updated"));
         router.push("/profile");
       },
     });
