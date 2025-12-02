@@ -1,4 +1,5 @@
 "use client";
+import { useLogoutUser } from "@/modules/auth/auth.query";
 import { Button, Dropdown, Layout, Menu, Typography } from "antd";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,22 +14,30 @@ export default function AppHeader() {
   const currentRouteKey = pathname?.split("/")?.[1] || "home";
   const [user, setUser] = useState(null);
   const router = useRouter();
-
   useEffect(() => {
-    const storedUser = localStorage.getItem("userData");
-    const token = localStorage.getItem("token");
+    const updateUser = () => {
+      const storedUser = localStorage.getItem("userData");
+      const token = localStorage.getItem("token");
 
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      setUser(null);
-    }
-  }, [router]);
+      if (storedUser && token) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
+    };
 
-  const logout = () => {
-    localStorage.removeItem("userData");
+    updateUser();
+
+    window.addEventListener("user-updated", updateUser);
+
+    return () => {
+      window.removeEventListener("user-updated", updateUser);
+    };
+  }, []);
+
+  const logout = useLogoutUser(() => {
     setUser(null);
-  };
+  });
 
   const items1 = [
     {
@@ -50,7 +59,10 @@ export default function AppHeader() {
   const userMenu = {
     items: [
       { key: "profile", label: <Link href="/profile">Profile</Link> },
-      { key: "logout", label: <span onClick={logout}>Logout</span> },
+      {
+        key: "logout",
+        label: <button onClick={() => logout.mutate()}>Logout</button>,
+      },
     ],
   };
 
