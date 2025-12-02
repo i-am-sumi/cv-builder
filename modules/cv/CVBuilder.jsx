@@ -1,16 +1,12 @@
 "use client";
-import {
-  faCheck,
-  faEye,
-  faPen,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Button, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import Search from "antd/es/input/Search";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import { useEducations } from "../education/education.query";
 import { useExperiences } from "../experience/experience.query";
 import { useSkills } from "../skill/skill.query";
@@ -46,8 +42,14 @@ export default function CVBuilder() {
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
   const [skills, setSkills] = useState([]);
-  const buttons = ["All", "Work", "Education", "Skills"];
   const [activeFilter, setActiveFilter] = useState("All");
+  const [searchText, setSearchText] = useState("");
+  const [activeItems, setActiveItems] = useState({
+    experiences: [],
+    education: [],
+    skills: [],
+  });
+  const buttons = ["All", "Work", "Education", "Skills"];
 
   useEffect(() => {
     if (experiencesData) setExperiences(experiencesData);
@@ -58,40 +60,125 @@ export default function CVBuilder() {
   useEffect(() => {
     const savedResumeData = localStorage.getItem("resumeData");
     if (savedResumeData) {
-      const parsedData = JSON.parse(savedResumeData);
-      setResumeExperiences(parsedData.experiences || []);
-      setResumeEducation(parsedData.education || []);
-      setResumeSkills(parsedData.skills || []);
+      try {
+        const parsed = JSON.parse(savedResumeData);
+
+        setResumeExperiences(parsed.experiences || []);
+        setResumeEducation(parsed.education || []);
+        setResumeSkills(parsed.skills || []);
+        setResumeSummary(parsed.summary || "");
+
+        setActiveItems({
+          experiences: (parsed.experiences || []).map((x) => x.id),
+          education: (parsed.education || []).map((x) => x.id),
+          skills: (parsed.skills || []).map((x) => x.category),
+        });
+      } catch (e) {
+        console.error("Failed to parse saved resumeData:", e);
+      }
     }
   }, []);
 
-  const handleSave = () => {
+  useEffect(() => {
+    localStorage.setItem("activeItems", JSON.stringify(activeItems));
+  }, [activeItems]);
+
+  const saveResumeData = (
+    experiencesArr,
+    educationArr,
+    skillsArr,
+    summaryStr
+  ) => {
     const resumeData = {
-      experiences: resumeExperiences,
-      education: resumeEducation,
-      skills: resumeSkills,
-      summary: resumeSummary,
+      experiences: experiencesArr,
+      education: educationArr,
+      skills: skillsArr,
+      summary: summaryStr || "",
     };
     localStorage.setItem("resumeData", JSON.stringify(resumeData));
+
+    setResumeSummary(summaryStr || "");
   };
+
+  const updateResumeData = (updated) => {
+    const experiencesArr = updated.experiences || [];
+    const educationArr = updated.education || [];
+    const skillsArr = updated.skills || [];
+    const summaryStr = updated.text ?? "";
+
+    setResumeExperiences(experiencesArr);
+    setResumeEducation(educationArr);
+    setResumeSkills(skillsArr);
+    setResumeSummary(summaryStr);
+    setActiveItems({
+      experiences: experiencesArr.map((x) => x.id),
+      education: educationArr.map((x) => x.id),
+      skills: skillsArr.map((x) => x.category),
+    });
+
+    saveResumeData(experiencesArr, educationArr, skillsArr, summaryStr);
+  };
+
+  const handleSave = () => {
+    saveResumeData(
+      resumeExperiences,
+      resumeEducation,
+      resumeSkills,
+      resumeSummary
+    );
+  };
+
   const handleDeleteResumeItem = (type, id) => {
     if (type === "experience") {
       const newItems = resumeExperiences.filter((item) => item.id !== id);
       setResumeExperiences(newItems);
-      localStorage.setItem("resumeExperiences", JSON.stringify(newItems));
+
+      const newActive = activeItems.experiences.filter((x) => x !== id);
+      const newActiveItems = { ...activeItems, experiences: newActive };
+      setActiveItems(newActiveItems);
+
+      saveResumeData(newItems, resumeEducation, resumeSkills, resumeSummary);
+      localStorage.setItem("activeItems", JSON.stringify(newActiveItems));
+      toast.success("Experiences removed successfully!");
     } else if (type === "education") {
       const newItems = resumeEducation.filter((item) => item.id !== id);
       setResumeEducation(newItems);
-      localStorage.setItem("resumeEducation", JSON.stringify(newItems));
+
+      const newActive = activeItems.education.filter((x) => x !== id);
+      const newActiveItems = { ...activeItems, education: newActive };
+      setActiveItems(newActiveItems);
+
+      saveResumeData(resumeExperiences, newItems, resumeSkills, resumeSummary);
+      localStorage.setItem("activeItems", JSON.stringify(newActiveItems));
+      toast.success("Education removed successfully!");
     } else if (type === "skill") {
+      const deletedItem = resumeSkills.find((item) => item.id === id);
+
       const newItems = resumeSkills.filter((item) => item.id !== id);
       setResumeSkills(newItems);
-      localStorage.setItem("resumeSkills", JSON.stringify(newItems));
+
+      const newActive = activeItems.skills.filter(
+        (x) => x !== deletedItem.category
+      );
+
+      const newActiveItems = { ...activeItems, skills: newActive };
+      setActiveItems(newActiveItems);
+
+      saveResumeData(
+        resumeExperiences,
+        resumeEducation,
+        newItems,
+        resumeSummary
+      );
+
+      localStorage.setItem("activeItems", JSON.stringify(newActiveItems));
+      toast.success("Skill removed successfully!");
     }
   };
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
+
     const { source, destination } = result;
 
     if (source.droppableId === destination.droppableId) {
@@ -104,57 +191,140 @@ export default function CVBuilder() {
       if (source.droppableId === "skills") {
         setSkills(reorder(skills, source.index, destination.index));
       }
-      if (source.droppableId === "resumeExperiences") {
-        setResumeExperiences(
-          reorder(resumeExperiences, source.index, destination.index)
-        );
+      return;
+    }
+
+    const allowedTargets = {
+      experiences: "resumeExperiences",
+      education: "resumeEducation",
+      skills: "resumeSkills",
+    };
+
+    const validTarget = allowedTargets[source.droppableId];
+
+    if (destination.droppableId !== validTarget) {
+      toast.error("This card doesn't belong to this section!");
+      return;
+    }
+
+    if (source.droppableId === "experiences") {
+      const item = experiences[source.index];
+
+      if (resumeExperiences.some((x) => x.id === item.id)) {
+        toast.error("This experience is already added!");
+        return;
       }
-      if (source.droppableId === "resumeEducation") {
-        setResumeEducation(
-          reorder(resumeEducation, source.index, destination.index)
-        );
+
+      const newItem = { ...item, type: "experience" };
+      const newResumeExperiences = [...resumeExperiences, newItem];
+      setResumeExperiences(newResumeExperiences);
+
+      const newActive = {
+        ...activeItems,
+        experiences: [...activeItems.experiences, item.id],
+      };
+      setActiveItems(newActive);
+
+      saveResumeData(
+        newResumeExperiences,
+        resumeEducation,
+        resumeSkills,
+        resumeSummary
+      );
+      localStorage.setItem("activeItems", JSON.stringify(newActive));
+    }
+
+    if (source.droppableId === "education") {
+      const item = education[source.index];
+
+      if (resumeEducation.some((x) => x.id === item.id)) {
+        toast.error("This education item is already added!");
+        return;
       }
-      if (source.droppableId === "resumeSkills") {
-        setResumeSkills(reorder(resumeSkills, source.index, destination.index));
+
+      const newItem = { ...item, type: "education" };
+      const newResumeEducation = [...resumeEducation, newItem];
+      setResumeEducation(newResumeEducation);
+
+      const newActive = {
+        ...activeItems,
+        education: [...activeItems.education, item.id],
+      };
+      setActiveItems(newActive);
+
+      saveResumeData(
+        resumeExperiences,
+        newResumeEducation,
+        resumeSkills,
+        resumeSummary
+      );
+      localStorage.setItem("activeItems", JSON.stringify(newActive));
+    }
+
+    if (source.droppableId === "skills") {
+      const item = skills[source.index];
+
+      if (resumeSkills.some((x) => x.category === item.category)) {
+        toast.error("This skill is already added!");
+        return;
       }
-    } else {
-      if (
-        ["experiences", "education", "skills"].includes(source.droppableId) &&
-        ["resumeExperiences", "resumeEducation", "resumeSkills"].includes(
-          destination.droppableId
-        )
-      ) {
-        let copiedItem;
-        if (source.droppableId === "experiences") {
-          copiedItem = experiences[source.index];
-          setResumeExperiences([
-            ...resumeExperiences,
-            { ...copiedItem, id: Date.now(), type: "experience" },
-          ]);
-        }
-        if (source.droppableId === "education") {
-          copiedItem = education[source.index];
-          setResumeEducation([
-            ...resumeEducation,
-            { ...copiedItem, id: Date.now(), type: "education" },
-          ]);
-        }
-        if (source.droppableId === "skills") {
-          copiedItem = skills[source.index];
-          setResumeSkills([
-            ...resumeSkills,
-            { ...copiedItem, id: Date.now(), type: "skills" },
-          ]);
-        }
-      }
+
+      const newItem = { ...item, type: "skill" };
+      const newResumeSkills = [...resumeSkills, newItem];
+      setResumeSkills(newResumeSkills);
+
+      const newActive = {
+        ...activeItems,
+        skills: [...activeItems.skills, item.category],
+      };
+      setActiveItems(newActive);
+
+      saveResumeData(
+        resumeExperiences,
+        resumeEducation,
+        newResumeSkills,
+        resumeSummary
+      );
+      localStorage.setItem("activeItems", JSON.stringify(newActive));
     }
   };
 
   const isVisible = (category) =>
     activeFilter === "All" || activeFilter === category;
 
+  const filteredExperiences = experiences.filter(
+    (exp) =>
+      exp.jobTitle.toLowerCase().includes(searchText) ||
+      exp.company.toLowerCase().includes(searchText) ||
+      exp.description.toLowerCase().includes(searchText)
+  );
+
+  const filteredEducation = education.filter(
+    (edu) =>
+      edu.degree.toLowerCase().includes(searchText) ||
+      edu.institution.toLowerCase().includes(searchText) ||
+      edu.description.toLowerCase().includes(searchText)
+  );
+
+  const filteredSkills = skills.filter(
+    (s) =>
+      s.name.toLowerCase().includes(searchText) ||
+      s.category.toLowerCase().includes(searchText)
+  );
+
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Navber>
         <div
           style={{
@@ -170,6 +340,7 @@ export default function CVBuilder() {
             <Button color="gold" variant="solid" style={{ fontWeight: "bold" }}>
               AI Help
             </Button>
+
             <Button
               color="default"
               variant="outlined"
@@ -180,6 +351,7 @@ export default function CVBuilder() {
                 <FontAwesomeIcon icon={faEye} /> Preview
               </Link>
             </Button>
+
             <Button
               color="default"
               variant="outlined"
@@ -188,6 +360,7 @@ export default function CVBuilder() {
             >
               Save
             </Button>
+
             <Button type="primary" style={{ fontWeight: "bold" }}>
               Export
             </Button>
@@ -202,12 +375,16 @@ export default function CVBuilder() {
               <Card style={{ background: "#edebf8" }}>
                 <Title level={3}>Content Library</Title>
                 <Text>Drag items to your resume</Text>
+
                 <Search
                   placeholder="Search"
                   allowClear
                   size="large"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value.toLowerCase())}
                   style={{ margin: "10px 0" }}
                 />
+
                 <Flex
                   gap="small"
                   wrap
@@ -237,7 +414,7 @@ export default function CVBuilder() {
                           {...provided.droppableProps}
                           ref={provided.innerRef}
                         >
-                          {experiences?.map((exp, index) => (
+                          {filteredExperiences.map((exp, index) => (
                             <Draggable
                               key={exp.id}
                               draggableId={exp.id.toString()}
@@ -250,35 +427,28 @@ export default function CVBuilder() {
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     style={{
-                                      border: snapshot.isDragging
-                                        ? "1px dashed #1677ff"
-                                        : "1px solid #1f8f09",
+                                      border: activeItems.experiences.includes(
+                                        exp.id
+                                      )
+                                        ? "1px solid #0af131"
+                                        : "1px solid #a5b3a2",
                                       borderRadius: "8px",
+                                      background:
+                                        activeItems.experiences.includes(exp.id)
+                                          ? "#f1faef"
+                                          : "white",
                                       ...provided.draggableProps.style,
                                     }}
                                   >
-                                    <CheckBoxIcon>
-                                      <FontAwesomeIcon icon={faCheck} />
-                                    </CheckBoxIcon>
+                                    {activeItems.experiences.includes(
+                                      exp.id
+                                    ) && (
+                                      <CheckBoxIcon>
+                                        <FontAwesomeIcon icon={faCheck} />
+                                      </CheckBoxIcon>
+                                    )}
+
                                     <Title level={5}>{exp.jobTitle}</Title>
-                                    <div className="editDeleteBtns">
-                                      <Button
-                                        icon={<FontAwesomeIcon icon={faPen} />}
-                                        type="primary"
-                                        size="small"
-                                      />
-                                      <Button
-                                        icon={
-                                          <FontAwesomeIcon icon={faTrash} />
-                                        }
-                                        danger
-                                        type="primary"
-                                        size="small"
-                                        onClick={() =>
-                                          handleDeleteResumeItem(type, item.id)
-                                        }
-                                      />
-                                    </div>
                                     <Text>{exp.company}</Text>
                                     <Paragraph
                                       style={{
@@ -325,7 +495,7 @@ export default function CVBuilder() {
                           {...provided.droppableProps}
                           ref={provided.innerRef}
                         >
-                          {education?.map((edu, index) => (
+                          {filteredEducation.map((edu, index) => (
                             <Draggable
                               key={edu.id}
                               draggableId={edu.id.toString()}
@@ -339,35 +509,26 @@ export default function CVBuilder() {
                                     {...provided.dragHandleProps}
                                     style={{
                                       marginTop: "5px",
-                                      border: snapshot.isDragging
-                                        ? "1px dashed #1677ff"
-                                        : "1px solid #07b62d",
+                                      border: activeItems.education.includes(
+                                        edu.id
+                                      )
+                                        ? "1px solid #09f128"
+                                        : "1px solid #b4b8b4",
                                       borderRadius: "8px",
+                                      background:
+                                        activeItems.education.includes(edu.id)
+                                          ? "#f6fdf5"
+                                          : "white",
                                       ...provided.draggableProps.style,
                                     }}
                                   >
-                                    <CheckBoxIcon>
-                                      <FontAwesomeIcon icon={faCheck} />
-                                    </CheckBoxIcon>
+                                    {activeItems.education.includes(edu.id) && (
+                                      <CheckBoxIcon>
+                                        <FontAwesomeIcon icon={faCheck} />
+                                      </CheckBoxIcon>
+                                    )}
+
                                     <Title level={5}>{edu.degree}</Title>
-                                    <div className="editDeleteBtns">
-                                      <Button
-                                        icon={<FontAwesomeIcon icon={faPen} />}
-                                        type="primary"
-                                        size="small"
-                                      />
-                                      <Button
-                                        icon={
-                                          <FontAwesomeIcon icon={faTrash} />
-                                        }
-                                        danger
-                                        type="primary"
-                                        size="small"
-                                        onClick={() =>
-                                          handleDeleteResumeItem(type, item.id)
-                                        }
-                                      />
-                                    </div>
                                     <Text>{edu.institution}</Text>
                                     <Paragraph
                                       style={{
@@ -411,7 +572,7 @@ export default function CVBuilder() {
                     <Droppable droppableId="skills">
                       {(provided) => {
                         const uniqueCategories = [
-                          ...new Set(skills.map((s) => s.category)),
+                          ...new Set(filteredSkills.map((s) => s.category)),
                         ];
                         return (
                           <div
@@ -432,42 +593,32 @@ export default function CVBuilder() {
                                       {...provided.dragHandleProps}
                                       style={{
                                         marginTop: "5px",
-                                        border: snapshot.isDragging
-                                          ? "1px dashed #1677ff"
-                                          : "1px solid #08a00f",
+                                        border: activeItems.skills.includes(
+                                          category
+                                        )
+                                          ? "1px solid #07fc07"
+                                          : "1px solid #a9aaa9",
                                         borderRadius: "8px",
+                                        background: activeItems.skills.includes(
+                                          category
+                                        )
+                                          ? "#edf7ed"
+                                          : "white",
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <CheckBoxIcon>
-                                        <FontAwesomeIcon icon={faCheck} />
-                                      </CheckBoxIcon>
+                                      {activeItems.skills.includes(
+                                        category
+                                      ) && (
+                                        <CheckBoxIcon>
+                                          <FontAwesomeIcon icon={faCheck} />
+                                        </CheckBoxIcon>
+                                      )}
+
                                       <Title level={4}>{category}</Title>
-                                      <div className="editDeleteBtns">
-                                        <Button
-                                          icon={
-                                            <FontAwesomeIcon icon={faPen} />
-                                          }
-                                          type="primary"
-                                          size="small"
-                                        />
-                                        <Button
-                                          icon={
-                                            <FontAwesomeIcon icon={faTrash} />
-                                          }
-                                          danger
-                                          type="primary"
-                                          size="small"
-                                          onClick={() =>
-                                            handleDeleteResumeItem(
-                                              type,
-                                              item.id
-                                            )
-                                          }
-                                        />
-                                      </div>
+
                                       <ul style={{ marginLeft: "15px" }}>
-                                        {skills
+                                        {filteredSkills
                                           .filter(
                                             (s) => s.category === category
                                           )
@@ -482,7 +633,7 @@ export default function CVBuilder() {
                                       <CloneCard>
                                         <Title level={4}>{category}</Title>
                                         <ul style={{ marginLeft: "15px" }}>
-                                          {skills
+                                          {filteredSkills
                                             .filter(
                                               (s) => s.category === category
                                             )
@@ -513,7 +664,9 @@ export default function CVBuilder() {
                 resumeExperiences={resumeExperiences}
                 resumeEducation={resumeEducation}
                 resumeSkills={resumeSkills}
+                resumeSummary={resumeSummary}
                 handleDeleteResumeItem={handleDeleteResumeItem}
+                updateResumeData={updateResumeData}
               />
             </Col>
           </Row>
