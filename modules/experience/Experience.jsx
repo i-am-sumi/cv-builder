@@ -35,6 +35,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Layout from "antd/es/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import { EducationSection } from "../education/Education.stc";
 import { AchievementLists, Analytics } from "./Experience.stc";
 
@@ -62,12 +63,14 @@ export default function Experience() {
   };
 
   const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this experience?")) {
-      deleteExperience(id, {
-        onSuccess: () => message.success("Experience deleted successfully"),
-        onError: () => message.error("Failed to delete"),
-      });
-    }
+    deleteExperience(id, {
+      onSuccess: () => {
+        toast.success("Experience deleted successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to delete Experience!");
+      },
+    });
   };
 
   const handleSubmit = (formValues) => {
@@ -106,6 +109,7 @@ export default function Experience() {
 
   return (
     <Layout>
+      <ToastContainer />
       <EducationSection>
         <div style={{ position: "relative", marginBottom: "5px" }}>
           <div style={{ marginTop: "10px" }}>
