@@ -22,6 +22,7 @@ import Layout from "antd/es/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
 
+import { toast, ToastContainer } from "react-toastify";
 import { EditDeleteBtns, EducationListItem, EduHeader } from "./Education.stc";
 
 const { Title, Text, Paragraph } = Typography;
@@ -46,12 +47,14 @@ export default function Education() {
   };
 
   const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this education?")) {
-      deleteEducation(id, {
-        onSuccess: () => message.success("Experience deleted successfully"),
-        onError: () => message.error("Failed to delete"),
-      });
-    }
+    deleteEducation(id, {
+      onSuccess: () => {
+        toast.success("Education deleted successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to delete education!");
+      },
+    });
   };
 
   const handleSubmit = (formValues) => {
@@ -287,7 +290,7 @@ export default function Education() {
                 </Flex>
               </Card>
               <Card
-                title={<Title level={3}>AI Suggestions</Title>}
+                title={<Title level={3}>frontend developer</Title>}
                 variant="borderless"
                 style={{
                   marginTop: "20px",
@@ -377,6 +380,7 @@ export default function Education() {
         loading={creating || updating}
         type="education"
       />
+      <ToastContainer />
     </Layout>
   );
 }
