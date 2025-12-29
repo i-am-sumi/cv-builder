@@ -2,13 +2,13 @@
 
 import LoadingCard from "@/modules/components/LoadingCard";
 import EducationModal from "@/modules/components/modal/EducationModal";
-import { ProfessionalCertified } from "@/modules/components/ProffisionalCertificate";
 import {
   useAddEducation,
   useDeleteEducation,
   useEducations,
   useUpdateEducation,
 } from "@/modules/education/education.query";
+import { ProfessionalCertified } from "@/modules/ProffisionalCertificate";
 import { BellOutlined, MobileOutlined } from "@ant-design/icons";
 import {
   faGraduationCap,
@@ -23,6 +23,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { toast, ToastContainer } from "react-toastify";
+import Error from "../components/Error";
 import { EditDeleteBtns, EducationListItem, EduHeader } from "./Education.stc";
 
 const { Title, Text, Paragraph } = Typography;
@@ -92,6 +93,7 @@ export default function Education() {
     }
   };
 
+  if (error) return <Error />;
   return (
     <Layout>
       <div

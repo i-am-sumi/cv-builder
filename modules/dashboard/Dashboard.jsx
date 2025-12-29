@@ -21,6 +21,7 @@ import {
 } from "antd";
 import Layout from "antd/es/layout/layout";
 import Image from "next/image";
+import Error from "../components/Error";
 import LoadingCard from "../components/LoadingCard";
 import { useJobs } from "../jobs/jobs.query";
 import { DashboardCard } from "./Dashboard.stc";
@@ -28,7 +29,8 @@ import { DashboardCard } from "./Dashboard.stc";
 const { Title, Text, Paragraph } = Typography;
 
 export default function Dashboard() {
-  const { data, isLoading } = useJobs();
+  const { data, isLoading, error } = useJobs();
+  if (error) return <Error />;
   return (
     <Layout>
       <div style={{ padding: "15px 48px" }}>
@@ -62,7 +64,7 @@ export default function Dashboard() {
             </DashboardCard>
           </Col>
           <Col xs={24} sm={16} md={8} lg={6} style={{ marginBottom: "5px" }}>
-            <DashboardCard variant="borderless">
+            <DashboardCard>
               <Title level={5} style={{ color: "grey" }}>
                 Interview Calls
               </Title>

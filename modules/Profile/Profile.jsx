@@ -16,6 +16,7 @@ import {
   Typography,
 } from "antd";
 import Layout from "antd/es/layout/layout";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useEducations } from "../education/education.query";
 import { useExperiences } from "../experience/experience.query";
@@ -69,9 +70,16 @@ export default function Profile() {
             </Avatar>
 
             <div>
-              <Title level={2}>
-                {user ? `${user.firstName} ${user.lastName}` : "User Name"}
-              </Title>
+              <motion.h2
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 2 }}
+                style={{ fontSize: "30px", fontWeight: "bold", color: "blue" }}
+              >
+                {user
+                  ? `${user.firstName.toUpperCase()} ${user.lastName.toUpperCase()}`
+                  : "User Name"}
+              </motion.h2>
               <Text style={{ fontSize: "16px", color: "#10f0f8" }}>
                 Senior Frontend Developer
               </Text>

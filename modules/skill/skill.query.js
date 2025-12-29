@@ -14,6 +14,7 @@ export const useSkills = () => {
     enabled: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    retry: false,
   });
 };
 

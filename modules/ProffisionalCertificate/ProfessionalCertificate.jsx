@@ -9,7 +9,7 @@ const { Title, Text, Paragraph } = Typography;
 export default function ProfessionalCertified() {
   return (
     <ProfessionalCSection>
-      <Card title={<Title level={3}>Professional Certifications</Title>}>
+      <Card title={<Title level={3}>Professional</Title>}>
         <Wrapper>
           <Title level={5}>AWS Certified Solutions Architect</Title>
           <Text style={{ color: "blue" }}>Amazon Web Services</Text>

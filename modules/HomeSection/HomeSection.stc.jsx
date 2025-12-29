@@ -12,13 +12,14 @@ export const Span = styled(Text)`
   margin-left: auto;
   margin-right: auto;
 `;
-
-export const HomeTitle = styled(Title)`
-  text-align: center;
-  font-family: cursive;
-  align-items: center;
-  padding-top: 30px;
-  font-size: 45px;
+export const Content = styled.div`
+  & .homeTitle {
+    text-align: center;
+    font-family: cursive;
+    align-items: center;
+    padding-top: 30px;
+    font-size: 45px;
+  }
 `;
 
 export const Buttons = styled(Flex)`

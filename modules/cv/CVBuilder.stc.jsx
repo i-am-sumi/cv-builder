@@ -73,7 +73,7 @@ export const Navber = styled(Header)`
   width: 100%;
   min-height: 80px;
   top: 0;
-  z-index: 1000;
+  z-index: 800;
   flex-wrap: wrap;
   flex-wrap: wrap;
   background-color: #e5ecfd;

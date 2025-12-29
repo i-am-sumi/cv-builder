@@ -12,6 +12,9 @@ export const useEducations = () => {
     queryKey: ["education"],
     queryFn: getEducations,
     enabled: true,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 

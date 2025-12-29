@@ -192,12 +192,17 @@ export default function ResumeCard({
         <Col xs={24} md={18}>
           <Droppable droppableId={droppableId}>
             {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                data-section-type={type}
+              >
                 {items.length === 0 && (
                   <Paragraph style={{ color: "gray" }}>
                     No {title.toLowerCase()} added yet.
                   </Paragraph>
                 )}
+
                 {items.map((item, index) => (
                   <Draggable
                     key={`${type}-${item.id}`}
@@ -242,6 +247,7 @@ export default function ResumeCard({
                               </Paragraph>
                             )}
                           </div>
+
                           <div className="editDeleteBtns">
                             <Button
                               icon={<FontAwesomeIcon icon={faPen} />}

@@ -23,6 +23,7 @@ import {
 } from "antd";
 import Search from "antd/es/input/Search";
 import Image from "next/image";
+import Error from "../components/Error";
 import LoadingCard from "../components/LoadingCard";
 import { JobForm, Wapper } from "./Jobs.stc";
 import { useJobs } from "./jobs.query";
@@ -32,7 +33,8 @@ const { Title, Text, Paragraph } = Typography;
 const HeartIcon = (props) => <Icon component={HeartSvg} {...props} />;
 
 export default function Jobs() {
-  const { data, isLoading } = useJobs();
+  const { data, isLoading, error } = useJobs();
+  if (error) return <Error />;
 
   return (
     <Layout>

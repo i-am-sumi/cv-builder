@@ -2,7 +2,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { faAtom } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card, Col, Flex, Progress, Row, Tag, Typography } from "antd";
-import LoadingCard from "./LoadingCard";
+import LoadingCard from "./components/LoadingCard";
 
 const { Title, Text } = Typography;
 

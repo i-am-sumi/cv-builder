@@ -11,16 +11,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Button, Col, Layout, Row, Typography } from "antd";
 import Aos from "aos";
+import { motion } from "motion/react";
+
 import { useEffect } from "react";
 import {
   Buttons,
+  Content,
   HomeSectionCard,
-  HomeTitle,
   Section,
   Span,
 } from "./HomeSection.stc";
 
-const { Content } = Layout;
 const { Title, Paragraph } = Typography;
 
 const cardItem = [
@@ -62,12 +63,15 @@ export default function HomeSection() {
     <Layout>
       <Section>
         <Content style={{ position: "relative", borderRadius: "8px" }}>
-          <HomeTitle
-            data-aos="fade-right"
+          <motion.h1
+            className="homeTitle"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 2 }}
             style={{ color: "white", fontSize: "45px" }}
           >
             Build Your Perfect CV with AI
-          </HomeTitle>
+          </motion.h1>
           <div style={{ marginTop: "8px", textAlign: "center" }}>
             <Span>
               Create professional CVs tailored to any job posting using our
@@ -90,7 +94,12 @@ export default function HomeSection() {
                 }}
               />
             </Button>
-            <Button size="large" ghost className="button2">
+            <Button
+              size="large"
+              ghost
+              className="button2"
+              whileHover={{ scale: 1.2 }}
+            >
               Watch Demo
             </Button>
           </Buttons>

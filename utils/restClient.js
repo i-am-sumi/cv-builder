@@ -1,11 +1,19 @@
 import { createFetchero } from "fetchero";
-
-const token =
-  typeof window !== "undefined" ? localStorage.getItem("token") : "";
+import { getToken } from "./token";
 
 export const api = createFetchero({
   baseUrl: "https://cv-builder-ccht.onrender.com",
-  headers: {
-    Authorization: `Bearer ${token}`,
+
+  onRequest: (config) => {
+    const token = getToken();
+
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
+    return config;
   },
 });

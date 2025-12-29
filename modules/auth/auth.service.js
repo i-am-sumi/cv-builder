@@ -20,10 +20,10 @@ export const loginUser = async (credentials) => {
   return res.data;
 };
 
-export const logoutUser = async () => {
+export const logoutUser = async (token) => {
   const res = await api.rest.auth.logout.post({
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return res.data;

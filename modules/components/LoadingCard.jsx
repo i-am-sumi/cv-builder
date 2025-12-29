@@ -14,12 +14,12 @@ const LoadingCard = () => {
     <Row gutter={[16, 16]}>
       <Col span={24}>
         <Card>
-          <Skeleton active />
+          <Skeleton avatar paragraph={{ rows: 4 }} />
         </Card>
       </Col>
       <Col span={24}>
         <Card>
-          <Skeleton active />
+          <Skeleton avatar paragraph={{ rows: 4 }} />
         </Card>
       </Col>
     </Row>

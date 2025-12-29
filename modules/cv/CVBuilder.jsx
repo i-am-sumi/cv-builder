@@ -153,14 +153,12 @@ export default function CVBuilder() {
       toast.success("Education removed successfully!");
     } else if (type === "skill") {
       const deletedItem = resumeSkills.find((item) => item.id === id);
-
       const newItems = resumeSkills.filter((item) => item.id !== id);
       setResumeSkills(newItems);
 
       const newActive = activeItems.skills.filter(
         (x) => x !== deletedItem.category
       );
-
       const newActiveItems = { ...activeItems, skills: newActive };
       setActiveItems(newActiveItems);
 
@@ -170,26 +168,48 @@ export default function CVBuilder() {
         newItems,
         resumeSummary
       );
-
       localStorage.setItem("activeItems", JSON.stringify(newActiveItems));
-      toast.success("Skill removed successfully!");
+      toast.success("skill removed successfully!");
     }
   };
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
 
     if (source.droppableId === destination.droppableId) {
       if (source.droppableId === "experiences") {
         setExperiences(reorder(experiences, source.index, destination.index));
-      }
-      if (source.droppableId === "education") {
+      } else if (source.droppableId === "education") {
         setEducation(reorder(education, source.index, destination.index));
-      }
-      if (source.droppableId === "skills") {
+      } else if (source.droppableId === "skills") {
         setSkills(reorder(skills, source.index, destination.index));
+      } else if (source.droppableId === "resumeExperiences") {
+        const newArr = reorder(
+          resumeExperiences,
+          source.index,
+          destination.index
+        );
+        setResumeExperiences(newArr);
+        saveResumeData(newArr, resumeEducation, resumeSkills, resumeSummary);
+      } else if (source.droppableId === "resumeEducation") {
+        const newArr = reorder(
+          resumeEducation,
+          source.index,
+          destination.index
+        );
+        setResumeEducation(newArr);
+        saveResumeData(resumeExperiences, newArr, resumeSkills, resumeSummary);
+      } else if (source.droppableId === "resumeSkills") {
+        const newArr = reorder(resumeSkills, source.index, destination.index);
+        setResumeSkills(newArr);
+        saveResumeData(
+          resumeExperiences,
+          resumeEducation,
+          newArr,
+          resumeSummary
+        );
       }
       return;
     }
@@ -199,7 +219,6 @@ export default function CVBuilder() {
       education: "resumeEducation",
       skills: "resumeSkills",
     };
-
     const validTarget = allowedTargets[source.droppableId];
 
     if (destination.droppableId !== validTarget) {
@@ -207,46 +226,43 @@ export default function CVBuilder() {
       return;
     }
 
+    let newItem, newResumeSection, newActive;
+
     if (source.droppableId === "experiences") {
       const item = experiences[source.index];
-
       if (resumeExperiences.some((x) => x.id === item.id)) {
         toast.error("This experience is already added!");
         return;
       }
+      newItem = { ...item, type: "experience" };
+      newResumeSection = [...resumeExperiences, newItem];
+      setResumeExperiences(newResumeSection);
 
-      const newItem = { ...item, type: "experience" };
-      const newResumeExperiences = [...resumeExperiences, newItem];
-      setResumeExperiences(newResumeExperiences);
-
-      const newActive = {
+      newActive = {
         ...activeItems,
         experiences: [...activeItems.experiences, item.id],
       };
       setActiveItems(newActive);
 
       saveResumeData(
-        newResumeExperiences,
+        newResumeSection,
         resumeEducation,
         resumeSkills,
         resumeSummary
       );
-      localStorage.setItem("activeItems", JSON.stringify(newActive));
     }
 
     if (source.droppableId === "education") {
       const item = education[source.index];
-
       if (resumeEducation.some((x) => x.id === item.id)) {
         toast.error("This education item is already added!");
         return;
       }
+      newItem = { ...item, type: "education" };
+      newResumeSection = [...resumeEducation, newItem];
+      setResumeEducation(newResumeSection);
 
-      const newItem = { ...item, type: "education" };
-      const newResumeEducation = [...resumeEducation, newItem];
-      setResumeEducation(newResumeEducation);
-
-      const newActive = {
+      newActive = {
         ...activeItems,
         education: [...activeItems.education, item.id],
       };
@@ -254,26 +270,23 @@ export default function CVBuilder() {
 
       saveResumeData(
         resumeExperiences,
-        newResumeEducation,
+        newResumeSection,
         resumeSkills,
         resumeSummary
       );
-      localStorage.setItem("activeItems", JSON.stringify(newActive));
     }
 
     if (source.droppableId === "skills") {
       const item = skills[source.index];
-
       if (resumeSkills.some((x) => x.category === item.category)) {
         toast.error("This skill is already added!");
         return;
       }
+      newItem = { ...item, type: "skill" };
+      newResumeSection = [...resumeSkills, newItem];
+      setResumeSkills(newResumeSection);
 
-      const newItem = { ...item, type: "skill" };
-      const newResumeSkills = [...resumeSkills, newItem];
-      setResumeSkills(newResumeSkills);
-
-      const newActive = {
+      newActive = {
         ...activeItems,
         skills: [...activeItems.skills, item.category],
       };
@@ -282,11 +295,13 @@ export default function CVBuilder() {
       saveResumeData(
         resumeExperiences,
         resumeEducation,
-        newResumeSkills,
+        newResumeSection,
         resumeSummary
       );
-      localStorage.setItem("activeItems", JSON.stringify(newActive));
     }
+
+    if (newActive)
+      localStorage.setItem("activeItems", JSON.stringify(newActive));
   };
 
   const isVisible = (category) =>
@@ -314,17 +329,7 @@ export default function CVBuilder() {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={2500}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer />
       <Navber>
         <div
           style={{

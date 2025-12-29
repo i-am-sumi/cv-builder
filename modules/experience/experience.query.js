@@ -13,6 +13,9 @@ export const useExperiences = () => {
     queryKey: ["experiences"],
     queryFn: getExperiences,
     enabled: true,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 };
 

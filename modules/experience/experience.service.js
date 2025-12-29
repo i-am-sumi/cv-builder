@@ -46,13 +46,10 @@ export const updateExperience = async (experience) => {
         : experience.technologies.split(",").map((t) => t.trim()),
     },
   });
-
-  console.log("Update response:", res);
   return res.data;
 };
 
 export const deleteExperience = async (id) => {
   const res = await api.rest.experiences(id).delete({});
-
   return res.data;
 };

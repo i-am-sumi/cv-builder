@@ -1,6 +1,6 @@
 "use client";
-import FrameworkLibraries from "@/modules/components/FrameWork&Lebraries";
 import LoadingCard from "@/modules/components/LoadingCard";
+import FrameworkLibraries from "@/modules/FrameWork&Lebraries";
 import {
   useAddSkill,
   useDeleteSkill,
@@ -31,13 +31,14 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import Error from "../components/Error";
 import SkillModal from "../components/modal/SkillModal";
 import { SkillComponents, ToolsCard } from "./Skill.stc";
 
 const { Title, Text, Paragraph } = Typography;
 
 export default function Skill() {
-  const { data, isLoading } = useSkills();
+  const { data, isLoading, error } = useSkills();
   const { mutate: addSkill, isLoading: creating } = useAddSkill();
   const { mutate: updateSkill, isLoading: updating } = useUpdateSkill();
   const { mutate: deleteSkill } = useDeleteSkill();
@@ -97,6 +98,7 @@ export default function Skill() {
   );
   const tools = data?.filter((s) => s.category === "tool");
   const softSkills = data?.filter((s) => s.category === "soft_skill");
+  if (error) return <Error />;
 
   return (
     <Layout>

@@ -36,6 +36,7 @@ import Layout from "antd/es/layout/layout";
 import Image from "next/image";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import Error from "../components/Error";
 import { EducationSection } from "../education/Education.stc";
 import { AchievementLists, Analytics } from "./Experience.stc";
 
@@ -107,6 +108,7 @@ export default function Experience() {
     }
   };
 
+  if (error) return <Error />;
   return (
     <Layout>
       <ToastContainer />
