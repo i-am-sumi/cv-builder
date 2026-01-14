@@ -1,8 +1,8 @@
 import { api } from "@/utils/restClient";
 
-export const registerUser = async (user) => {
+export const registerUser = async (payload) => {
   const res = await api.rest.auth.register.post({
-    body: user,
+    body: payload,
     headers: {
       "Content-Type": "application/json",
     },
@@ -20,10 +20,10 @@ export const loginUser = async (credentials) => {
   return res.data;
 };
 
-export const logoutUser = async (token) => {
+export const logoutUser = async () => {
   const res = await api.rest.auth.logout.post({
     headers: {
-      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
   return res.data;

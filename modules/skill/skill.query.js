@@ -14,7 +14,6 @@ export const useSkills = () => {
     enabled: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    retry: false,
   });
 };
 
@@ -30,7 +29,7 @@ export const useAddSkill = () => {
   return useMutation({
     mutationFn: createSkill,
     onSuccess: () => {
-      queryClient.invalidateQueries(["skill"]);
+      queryClient.invalidateQueries(["skills"]);
     },
   });
 };

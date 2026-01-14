@@ -143,7 +143,11 @@ export default function Dashboard() {
                     <LoadingCard />
                   ) : (
                     data?.map((skill) => (
-                      <Card type="inner" style={{ position: "relative" }}>
+                      <Card
+                        key={skill.display}
+                        type="inner"
+                        style={{ position: "relative" }}
+                      >
                         <Title level={4}>{skill.title}</Title>
                         <Text style={{ fontSize: "14px", color: "blue" }}>
                           {skill.company}

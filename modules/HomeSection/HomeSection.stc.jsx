@@ -39,7 +39,7 @@ export const Buttons = styled(Flex)`
 
   & .button2 {
     min-width: 140px;
-    color: #3232eb;
+    color: #f6f6fa;
     height: 40px;
     line-height: 40px;
     border: 1px solid blue;

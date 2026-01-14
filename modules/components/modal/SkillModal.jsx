@@ -13,10 +13,11 @@ export default function SkillModal({
   const [form] = Form.useForm();
 
   useEffect(() => {
+    if (!open) return;
     if (initialData) {
       form.setFieldsValue(initialData);
     }
-  }, [initialData, form]);
+  }, [initialData, form, open]);
 
   return (
     <Modal

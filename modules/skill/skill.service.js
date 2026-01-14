@@ -1,7 +1,7 @@
 import { api } from "@/utils/restClient";
 
 export const getSkills = async () => {
-  const res = await api.rest.skills.get({
+  const res = await api.rest.skills().get({
     query: { page: 1, limit: 20 },
   });
   return res.data.skills;

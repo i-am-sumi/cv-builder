@@ -16,10 +16,11 @@ export default function AppHeader() {
   const router = useRouter();
   useEffect(() => {
     const updateUser = () => {
-      const storedUser = localStorage.getItem("userData");
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
       const token = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("userData");
 
-      if (storedUser && token) {
+      if (isLoggedIn === "true" && token && storedUser) {
         setUser(JSON.parse(storedUser));
       } else {
         setUser(null);
@@ -27,7 +28,6 @@ export default function AppHeader() {
     };
 
     updateUser();
-
     window.addEventListener("user-updated", updateUser);
 
     return () => {
@@ -97,7 +97,9 @@ export default function AppHeader() {
         {user ? (
           <div className="thing">
             <TagItem>
-              {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              {user?.role
+                ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                : "User"}
             </TagItem>
             <Dropdown menu={userMenu} placement="bottomRight">
               <User>{getInitials(user.firstName, user.lastName)}</User>

@@ -11,8 +11,9 @@ export default function EducationModal({
   loading,
 }) {
   const [form] = Form.useForm();
-
   useEffect(() => {
+    if (!open) return;
+
     if (initialData) {
       form.setFieldsValue({
         ...initialData,
@@ -23,7 +24,7 @@ export default function EducationModal({
     } else {
       form.resetFields();
     }
-  }, [initialData, form]);
+  }, [open, initialData, form]);
 
   return (
     <Modal

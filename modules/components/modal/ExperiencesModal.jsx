@@ -13,6 +13,7 @@ export default function ExperienceModal({
   const [form] = Form.useForm();
 
   useEffect(() => {
+    if (!open) return;
     if (initialData) {
       form.setFieldsValue({
         ...initialData,
@@ -26,7 +27,7 @@ export default function ExperienceModal({
     } else {
       form.resetFields();
     }
-  }, [initialData, form]);
+  }, [initialData, form, open]);
 
   return (
     <Modal
